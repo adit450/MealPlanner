@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`product` (
   `data_source` VARCHAR(64) NOT NULL,
   `gtin_upc` BIGINT NOT NULL,
   `manufacturer` VARCHAR(64),
-  `ingredients_english` MEDIUMTEXT NOT NULL)
+  `ingredients_english` LONGTEXT NOT NULL)
 ENGINE = InnoDB;
 
 CREATE INDEX `NDB` ON `mealplanner`.`product` (`NDB_Number` ASC) VISIBLE;

@@ -22,7 +22,7 @@ USE `mealplanner` ;
 CREATE TABLE IF NOT EXISTS `mealplanner`.`product` (
   `NDB_Number` INT NOT NULL,
   `expr_rate` INT NOT NULL,
-  `long_name` VARCHAR(64) NOT NULL,
+  `long_name` VARCHAR(255) NOT NULL,
   `data_source` VARCHAR(64) NOT NULL,
   `gtin_upc` BIGINT NOT NULL,
   `manufacturer` VARCHAR(64),

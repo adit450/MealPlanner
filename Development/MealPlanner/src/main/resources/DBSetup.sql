@@ -1,7 +1,5 @@
 -- MySQL Workbench Forward Engineering
 
-DROP SCHEMA IF EXISTS mealplanner;
-
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
@@ -21,8 +19,8 @@ USE `mealplanner` ;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mealplanner`.`product` (
   `NDB_Number` INT NOT NULL,
-  `expr_rate` INT NOT NULL,
   `long_name` VARCHAR(255) NOT NULL,
+  `expr_rate` INT NOT NULL,
   `data_source` VARCHAR(64) NOT NULL,
   `gtin_upc` BIGINT NOT NULL,
   `manufacturer` VARCHAR(64),
@@ -41,9 +39,9 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`user` (
   PRIMARY KEY (`user_id`))
 ENGINE = InnoDB;
 
-CREATE UNIQUE INDEX `username_UNIQUE` ON `mealplanner`.`user` (`username` ASC) VISIBLE;
+CREATE UNIQUE INDEX `username_UNIQUE` ON `mealplanner`.`user` (`username` ASC);
 
-CREATE UNIQUE INDEX `email_UNIQUE` ON `mealplanner`.`user` (`email` ASC) VISIBLE;
+CREATE UNIQUE INDEX `email_UNIQUE` ON `mealplanner`.`user` (`email` ASC);
 
 
 -- -----------------------------------------------------
@@ -66,9 +64,9 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`product_stock` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_stock_item_product_idx` ON `mealplanner`.`product_stock` (`NDB_Number` ASC) VISIBLE;
+CREATE INDEX `fk_stock_item_product_idx` ON `mealplanner`.`product_stock` (`NDB_Number` ASC);
 
-CREATE INDEX `fk_stock_item_user1_idx` ON `mealplanner`.`product_stock` (`user_id` ASC) VISIBLE;
+CREATE INDEX `fk_stock_item_user1_idx` ON `mealplanner`.`product_stock` (`user_id` ASC);
 
 
 -- -----------------------------------------------------
@@ -91,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`recipe` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_recipe_user1_idx` ON `mealplanner`.`recipe` (`creator_id` ASC) VISIBLE;
+CREATE INDEX `fk_recipe_user1_idx` ON `mealplanner`.`recipe` (`creator_id` ASC);
 
 
 -- -----------------------------------------------------
@@ -116,9 +114,9 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`intake_recipe` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_intake_recipe_user1_idx` ON `mealplanner`.`intake_recipe` (`user_id` ASC) VISIBLE;
+CREATE INDEX `fk_intake_recipe_user1_idx` ON `mealplanner`.`intake_recipe` (`user_id` ASC);
 
-CREATE INDEX `fk_intake_recipe_recipe1_idx` ON `mealplanner`.`intake_recipe` (`recipe_id` ASC) VISIBLE;
+CREATE INDEX `fk_intake_recipe_recipe1_idx` ON `mealplanner`.`intake_recipe` (`recipe_id` ASC);
 
 
 -- -----------------------------------------------------
@@ -141,9 +139,9 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`rating` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_recipe_has_user_user1_idx` ON `mealplanner`.`rating` (`user_id` ASC) VISIBLE;
+CREATE INDEX `fk_recipe_has_user_user1_idx` ON `mealplanner`.`rating` (`user_id` ASC);
 
-CREATE INDEX `fk_recipe_has_user_recipe1_idx` ON `mealplanner`.`rating` (`recipe_id` ASC) VISIBLE;
+CREATE INDEX `fk_recipe_has_user_recipe1_idx` ON `mealplanner`.`rating` (`recipe_id` ASC);
 
 
 -- -----------------------------------------------------
@@ -166,9 +164,10 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`recipe_has_product` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_recipe_has_product_product1_idx` ON `mealplanner`.`recipe_has_product` (`NDB_Number` ASC) VISIBLE;
+CREATE INDEX `fk_recipe_has_product_product1_idx` ON `mealplanner`.`recipe_has_product` (`NDB_Number` ASC);
 
-CREATE INDEX `fk_recipe_has_product_recipe1_idx` ON `mealplanner`.`recipe_has_product` (`recipe_id` ASC) VISIBLE;
+CREATE INDEX `fk_recipe_has_product_recipe1_idx` ON `mealplanner`.`recipe_has_product` (`recipe_id` ASC);
+
 
 
 -- -----------------------------------------------------
@@ -177,8 +176,8 @@ CREATE INDEX `fk_recipe_has_product_recipe1_idx` ON `mealplanner`.`recipe_has_pr
 CREATE TABLE IF NOT EXISTS `mealplanner`.`intake_stock` (
   `user_id` INT NOT NULL,
   `stock_id` INT NOT NULL,
-  `intake_id` VARCHAR(45) NOT NULL,
-  `intake_time` VARCHAR(45) NULL,
+  `intake_id`INT NOT NULL,
+  `intake_time` DATETIME NULL,
   `servings` INT NOT NULL,
   PRIMARY KEY (`intake_id`),
   CONSTRAINT `fk_intake_stock_user1`
@@ -193,8 +192,8 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`intake_stock` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_intake_stock_user1_idx` ON `mealplanner`.`intake_stock` (`user_id` ASC) VISIBLE;
-CREATE INDEX `fk_intake_stock_product_stock1_idx` ON `mealplanner`.`intake_stock` (`stock_id` ASC) VISIBLE;
+CREATE INDEX `fk_intake_stock_user1_idx` ON `mealplanner`.`intake_stock` (`user_id` ASC);
+CREATE INDEX `fk_intake_stock_product_stock1_idx` ON `mealplanner`.`intake_stock` (`stock_id` ASC);
 
 
 -- -----------------------------------------------------
@@ -212,7 +211,7 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`stock_item` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_stock_item_product_stock1_idx` ON `mealplanner`.`stock_item` (`quantity` ASC) VISIBLE;
+CREATE INDEX `fk_stock_item_product_stock1_idx` ON `mealplanner`.`stock_item` (`quantity` ASC);
 
 -- -----------------------------------------------------
 -- Table `mealplanner`.`derivation_code_description`
@@ -243,40 +242,39 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`follow` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_user_has_user_user2_idx` ON `mealplanner`.`follow` (`followee_id` ASC) VISIBLE;
+CREATE INDEX `fk_user_has_user_user2_idx` ON `mealplanner`.`follow` (`followee_id` ASC);
 
-CREATE INDEX `fk_user_has_user_user1_idx` ON `mealplanner`.`follow` (`follower_id` ASC) VISIBLE;
+CREATE INDEX `fk_user_has_user_user1_idx` ON `mealplanner`.`follow` (`follower_id` ASC);
 
 
 -- -----------------------------------------------------
--- Table `mealplanner`.`Nutrient`
+-- Table `mealplanner`.`nutrient`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mealplanner`.`Nutrient` (
+CREATE TABLE IF NOT EXISTS `mealplanner`.`nutrient` (
   `product_NDB_Number` INT NOT NULL,
   `nutrient_code` INT NOT NULL,
   `nutrient_name` VARCHAR(32) NOT NULL,
   `derivation_code` VARCHAR(10) NOT NULL,
   `output_value` DOUBLE NOT NULL,
   `output_uom` VARCHAR(10) NOT NULL,
-  PRIMARY KEY (`product_NDB_Number`),
-  CONSTRAINT `fk_Nutrient_product1`
+  CONSTRAINT `fk_nutrient_product1`
     FOREIGN KEY (`product_NDB_Number`)
     REFERENCES `mealplanner`.`product` (`NDB_Number`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Nutrient_dcd`
+  CONSTRAINT `fk_nutrient_dcd`
 	FOREIGN KEY (`derivation_code`)
     REFERENCES `mealplanner`.`derivation_code_description` (`derivation_code`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-CREATE INDEX `fk_Nutrient_product1_idx` ON `mealplanner`.`Nutrient` (`product_NDB_Number` ASC) VISIBLE;
+CREATE INDEX `fk_nutrient_product1_idx` ON `mealplanner`.`nutrient` (`product_NDB_Number` ASC);
 
 
 -- -----------------------------------------------------
--- Table `mealplanner`.`Serving_Size`
+-- Table `mealplanner`.`serving_size`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mealplanner`.`Serving_Size` (
+CREATE TABLE IF NOT EXISTS `mealplanner`.`serving_size` (
   `product_NDB_Number` INT NOT NULL,
   `serving_size` DOUBLE NOT NULL,
   `serving_size_uom` VARCHAR(10) NOT NULL,
@@ -284,13 +282,13 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`Serving_Size` (
   `household_serving_size_uom` VARCHAR(10) NOT NULL,
   `preparation_state` VARCHAR(32) NULL,
   PRIMARY KEY (`product_NDB_Number`),
-  CONSTRAINT `fk_Serving_Size_product1`
+  CONSTRAINT `fk_serving_size_product1`
     FOREIGN KEY (`product_NDB_Number`)
     REFERENCES `mealplanner`.`product` (`NDB_Number`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
-CREATE INDEX `fk_Serving_Size_product1_idx` ON `mealplanner`.`Serving_Size` (`product_NDB_Number` ASC) VISIBLE;
+CREATE INDEX `fk_serving_size_product1_idx` ON `mealplanner`.`serving_size` (`product_NDB_Number` ASC);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

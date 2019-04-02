@@ -22,7 +22,7 @@ public abstract class DatabaseConnection {
           ConfigurationProperties.getInstance().getProperty("dbusername");
 
   private static final String PASSWORD =
-          ConfigurationProperties.getInstance().getProperty("dbpasword");
+          ConfigurationProperties.getInstance().getProperty("dbpassword");
 
   private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());
 

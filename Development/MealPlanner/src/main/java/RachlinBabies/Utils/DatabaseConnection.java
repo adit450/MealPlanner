@@ -1,15 +1,9 @@
-package RachlinBabies.DBUtils;
+package RachlinBabies.Utils;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
@@ -36,30 +30,6 @@ public abstract class DatabaseConnection {
    * To prevent instantiation of this class.
    */
   private DatabaseConnection() {}
-
-  /**
-   * Maps result Set into list.
-   *
-   * @param resultSet the result set to be mapped
-   * @return the list of mapped objects
-   */
-  public static List<Map<String, Object>> resultsList(ResultSet resultSet) {
-    ArrayList<Map<String, Object>> list = new ArrayList<>();
-    try {
-      ResultSetMetaData md = resultSet.getMetaData();
-      int columns = md.getColumnCount();
-      while (resultSet.next()) {
-        HashMap<String, Object> row = new HashMap<>(columns);
-        for (int i = 1; i <= columns; i++) {
-          row.put(md.getColumnName(i), resultSet.getObject(i));
-        }
-        list.add(row);
-      }
-    } catch (SQLException e) {
-      LOGGER.log(Level.SEVERE, e.getMessage(), e);
-    }
-    return list;
-  }
 
   /**
    * Gets the database connection.

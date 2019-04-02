@@ -205,13 +205,13 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`stock_item` (
   `expiration_date` DATE NOT NULL,
   PRIMARY KEY (`stock_item_id`),
   CONSTRAINT `fk_stock_item_product_stock1`
-    FOREIGN KEY (`quantity`)
+    FOREIGN KEY (`stock_item_id`)
     REFERENCES `mealplanner`.`product_stock` (`stock_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_stock_item_product_stock1_idx` ON `mealplanner`.`stock_item` (`quantity` ASC);
+CREATE INDEX `fk_stock_item_product_stock1_idx` ON `mealplanner`.`stock_item` (`stock_item_id` ASC);
 
 -- -----------------------------------------------------
 -- Table `mealplanner`.`derivation_code_description`

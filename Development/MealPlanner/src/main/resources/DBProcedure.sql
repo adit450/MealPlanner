@@ -46,6 +46,22 @@ delimiter //
         END IF;
 	END//
     
+    DROP PROCEDURE IF EXISTS delete_intake //
+    CREATE PROCEDURE delete_intake
+    (
+		IN intake INT,
+        IN user INT,
+        OUT rowsAffected INT
+    )
+    BEGIN
+		SET rowsAffected = 0;
+		DELETE FROM intake_stock WHERE intake_id = intake AND user_id = user;
+        SET rowsAffected = rowsAffected + ROW_COUNT();
+        DELETE FROM intake_recipe WHERE intake_id = intake AND user_id = user;
+        SET rowsAffected = rowsAffected + ROW_COUNT();
+        SELECT rowsAffected;
+    END //
+    
 delimiter ;
 
 DESCRIBE intake_recipe;

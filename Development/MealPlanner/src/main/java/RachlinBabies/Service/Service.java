@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  * Abstract Service class that promises helper methods to convert ResultSets to the related model.
  * @param <M> The Model being operated on.
  */
-public abstract class Service<M> implements DataAccessObject<M> {
+public abstract class Service<M> {
   // set to 1 for testing purposes.
   static int userId = 1;
   static final Logger LOGGER = Logger.getLogger(Service.class.getName());

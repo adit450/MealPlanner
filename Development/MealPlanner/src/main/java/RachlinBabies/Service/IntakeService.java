@@ -1,9 +1,11 @@
 package RachlinBabies.Service;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,7 @@ public class IntakeService extends Service<Intake> implements IntakeDao {
     int result = 0;
     String query = String.format(
             "INSERT INTO %s (user_id, %s, servings, intake_time) VALUES (?,?,?,?)",
-            FK.get(toInsert.getType()), TABLES.get(toInsert.getType()));
+            TABLES.get(toInsert.getType()), FK.get(toInsert.getType()));
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
       stmt.setInt(1, userId);
@@ -61,25 +63,31 @@ public class IntakeService extends Service<Intake> implements IntakeDao {
    * @return the specified Intake
    */
   public Intake get(int intakeId) {
-    return null;
-  }
-
-  /**
-   * Updates the Intake with the same Id with the given attributes.
-   * @param toUpdate the Intake Object holding the wanted attributes.
-   * @return if the update was successful
-   */
-  public boolean update(Intake toUpdate) {
-    return false;
-  }
-
-  /**
-   * Deletes the specified intake.
-   * @param intakeId the intakeId fo the desired intake to delete
-   * @return if the delete was successful
-   */
-  public boolean delete(int intakeId) {
-    return false;
+    Intake ans = null;
+    String query = "SELECT * FROM " +
+            "(SELECT intake_id, user_id, recipe_id as 'source_id', servings, intake_time, " +
+            "'RCP' as type FROM intake_recipe WHERE user_id = ? AND intake_id = ? " +
+            "UNION " +
+            "SELECT intake_id, user_id, stock_id as 'source_id', servings, intake_time, " +
+            "'STK' as type FROM intake_stock WHERE user_id = ? AND intake_id = ?) intakes " +
+            "LIMIT 1";
+    Connection connection = DatabaseConnection.getConnection();
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+      stmt.setInt(1, userId);
+      stmt.setInt(2, intakeId);
+      stmt.setInt(3, userId);
+      stmt.setInt(4, intakeId);
+      try (ResultSet rs = stmt.executeQuery()) {
+        if (rs.first()) {
+          ans = convert(rs);
+        }
+      }
+    } catch(SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    } finally {
+      DatabaseConnection.closeConnection(connection);
+    }
+    return ans;
   }
 
   /**
@@ -109,6 +117,38 @@ public class IntakeService extends Service<Intake> implements IntakeDao {
       DatabaseConnection.closeConnection(connection);
     }
     return intakes;
+  }
+
+  /**
+   * Updates the Intake with the same Id with the given attributes.
+   * @param toUpdate the Intake Object holding the wanted attributes.
+   * @return if the update was successful
+   */
+  public boolean update(Intake toUpdate) {
+    return false;
+  }
+
+  /**
+   * Deletes the specified intake.
+   * @param intakeId the intakeId fo the desired intake to delete
+   * @return if the delete was successful
+   */
+  public boolean delete(int intakeId) {
+    int rowsChanged = 0;
+    String query = "CALL delete_intake(?,?,?)";
+    Connection connection = DatabaseConnection.getConnection();
+    try (CallableStatement stmt = connection.prepareCall(query)) {
+      stmt.setInt(1, intakeId);
+      stmt.setInt(2, userId);
+      stmt.registerOutParameter(3, Types.INTEGER);
+      stmt.executeUpdate();
+      rowsChanged = stmt.getInt(3);
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    } finally {
+      DatabaseConnection.closeConnection(connection);
+    }
+    return rowsChanged > 0;
   }
 
   /**

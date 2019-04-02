@@ -32,9 +32,9 @@ public abstract class DatabaseConnection {
   private DatabaseConnection() {}
 
   /**
-   * Gets the database connection.
+   * Gets the database dataSource.
    *
-   * @return the connection
+   * @return the dataSource
    */
   private static DataSource getDataSource() {
     MysqlDataSource ds = new MysqlDataSource();
@@ -44,6 +44,10 @@ public abstract class DatabaseConnection {
     return ds;
   }
 
+  /**
+   * Gets a database connection.
+   * @return the connection.
+   */
   public static Connection getConnection() {
     DataSource ds = getDataSource();
     Connection con = null;
@@ -55,6 +59,10 @@ public abstract class DatabaseConnection {
     return con;
   }
 
+  /**
+   * Close the given connection
+   * @param connection the connection to close.
+   */
   public static void closeConnection(Connection connection) {
     try {
       if (connection != null && !connection.isClosed()) {

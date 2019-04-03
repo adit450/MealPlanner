@@ -201,17 +201,18 @@ CREATE INDEX `fk_intake_stock_product_stock1_idx` ON `mealplanner`.`intake_stock
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mealplanner`.`stock_item` (
   `stock_item_id` INT NOT NULL AUTO_INCREMENT,
+  `stock_id` INT NOT NULL,
   `quantity` INT NOT NULL,
   `expiration_date` DATE NOT NULL,
-  PRIMARY KEY (`stock_item_id`),
+  PRIMARY KEY(`stock_item_id`),
   CONSTRAINT `fk_stock_item_product_stock1`
-    FOREIGN KEY (`stock_item_id`)
+    FOREIGN KEY (`stock_id`)
     REFERENCES `mealplanner`.`product_stock` (`stock_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_stock_item_product_stock1_idx` ON `mealplanner`.`stock_item` (`stock_item_id` ASC);
+CREATE INDEX `fk_stock_item_product_stock1_idx` ON `mealplanner`.`stock_item` (`stock_id` ASC);
 
 -- -----------------------------------------------------
 -- Table `mealplanner`.`derivation_code_description`

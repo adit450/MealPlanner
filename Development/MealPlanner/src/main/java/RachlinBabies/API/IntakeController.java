@@ -9,7 +9,7 @@ import RachlinBabies.Utils.ResponseError;
 import static RachlinBabies.Utils.JsonUtil.json;
 import static spark.Spark.*;
 
-public class IntakeController {
+class IntakeController {
 
   IntakeController(final IntakeDao intakeService) {
 
@@ -23,20 +23,6 @@ public class IntakeController {
       }
       res.status(404);
       return new ResponseError(String.format("No intake with id %d found", id));
-    }, json());
-
-    delete("/intakes/:id", (req, res) -> {
-      int id = Integer.parseInt(req.params(":id"));
-      Intake intake = intakeService.get(id);
-      if (intake == null) {
-        res.status(404);
-        return new ResponseError(String.format("No intake with id %d found", id));
-      } else if (!intakeService.delete(id)) {
-        res.status(400);
-        return new ResponseError(String.format("Failed to delete intake with id %d", id));
-      } else {
-        return String.format("Intake %d successfully deleted", id);
-      }
     }, json());
 
     post("/intakes", (req, res) -> {
@@ -53,5 +39,21 @@ public class IntakeController {
         return new ResponseError("Failed to insert intake");
       }
     }, json());
+
+    /*
+    delete("/intakes/:id", (req, res) -> {
+      int id = Integer.parseInt(req.params(":id"));
+      Intake intake = intakeService.get(id);
+      if (intake == null) {
+        res.status(404);
+        return new ResponseError(String.format("No intake with id %d found", id));
+      } else if (!intakeService.delete(id)) {
+        res.status(400);
+        return new ResponseError(String.format("Failed to delete intake with id %d", id));
+      } else {
+        return String.format("Intake %d successfully deleted", id);
+      }
+    }, json());
+    */
   }
 }

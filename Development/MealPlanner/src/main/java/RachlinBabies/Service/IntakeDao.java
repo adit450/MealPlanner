@@ -28,7 +28,4 @@ public interface IntakeDao {
    */
   boolean create(Intake toInsert);
 
-  boolean delete(int id);
-
-  boolean update(Intake toUpdate);
 }

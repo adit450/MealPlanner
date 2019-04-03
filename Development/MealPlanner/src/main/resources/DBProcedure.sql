@@ -62,6 +62,36 @@ delimiter //
         SELECT rowsAffected;
     END //
     
+    DROP FUNCTION IF EXISTS can_be_made //
+    CREATE FUNCTION can_be_made
+    (
+		user INT,
+        recipe INT
+    )
+    RETURNS INT DETERMINISTIC
+    BEGIN
+		DECLARE possibleServings INT;
+        SELECT MIN(IFNULL((quantity / servings), 0)) INTO possibleServings
+		FROM product JOIN recipe_has_product USING (NDB_Number)
+			LEFT JOIN product_stock s USING (NDB_Number)
+			JOIN stock_item si ON (s.stock_id = si.stock_item_id)
+		WHERE recipe_id = recipe AND user_id = user;
+	
+    END //
+    
 delimiter ;
 
-DESCRIBE intake_recipe;
+DESCRIBE recipe;
+DESCRIBE recipe_has_product;
+DESCRIBE stock_item;
+DESCRIBE product_stock;
+    
+SELECT * FROM stock_item;
+SELECT * FROM product_stock;
+
+SELECT NDB_Number, quantity, servings
+FROM product JOIN recipe_has_product USING (NDB_Number)
+	LEFT JOIN product_stock s USING (NDB_Number)
+	JOIN stock_item si ON (s.stock_id = si.stock_item_id)
+WHERE recipe_id = recipe AND user_id = user;
+		

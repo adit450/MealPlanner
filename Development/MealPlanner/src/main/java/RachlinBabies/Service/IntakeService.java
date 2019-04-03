@@ -119,13 +119,30 @@ public class IntakeService extends Service<Intake> implements IntakeDao {
     return intakes;
   }
 
+
   /**
-   * Updates the Intake with the same Id with the given attributes.
-   * @param toUpdate the Intake Object holding the wanted attributes.
-   * @return if the update was successful
+   * Updates the Intake time of the intake specified with the id.  Requires intake_id, new time,
+   * and the type.
+   * @param intakeWithTimestamp the intake with the desired Timestamp.  Only the timestamp will
+   *                            be updated.
+   * @return whether or not the update was successful.
    */
-  public boolean update(Intake toUpdate) {
-    return false;
+  public boolean updateIntakeTime(Intake intakeWithTimestamp) {
+    int result = 0;
+    String query = String.format("UPDATE %s SET %s = ? WHERE intake_id = ? AND user_id = ?",
+            TABLES.get(intakeWithTimestamp.getType()), FK.get(intakeWithTimestamp.getType()));
+    Connection connection = DatabaseConnection.getConnection();
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+      stmt.setTimestamp(1, intakeWithTimestamp.getIntakeDate());
+      stmt.setInt(2, intakeWithTimestamp.getId());
+      stmt.setInt(3, userId);
+      result = stmt.executeUpdate();
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    } finally {
+      DatabaseConnection.closeConnection(connection);
+    }
+    return result > 0;
   }
 
   /**

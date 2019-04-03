@@ -28,4 +28,12 @@ public interface IntakeDao {
    */
   boolean create(Intake toInsert);
 
+  /**
+   * Updates the Intake time of the intake specified with the id.  Requires intake_id and new time.
+   * @param intakeWithTimestamp the intake with the desired Timestamp.  Only the timestamp will
+   *                            be updated.
+   * @return whether or not the update was successful.
+   */
+  boolean updateIntakeTime(Intake intakeWithTimestamp);
+
 }

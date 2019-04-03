@@ -40,6 +40,20 @@ class IntakeController {
       }
     }, json());
 
+    patch("/intakes/:id/time", (req, res) -> {
+      Intake intake = new Intake.IntakeBuilder()
+              .id(Integer.parseInt(req.params(":id")))
+              .intakeDate(Timestamp.valueOf(req.queryParams(":intakeDate")))
+              .intakeType(req.queryParams(":type"))
+              .build();
+      if (intakeService.updateIntakeTime(intake)) {
+        return "Intake successfully updated";
+      } else {
+        res.status(400);
+        return new ResponseError("Failed to update intake");
+      }
+    }, json());
+
     /*
     delete("/intakes/:id", (req, res) -> {
       int id = Integer.parseInt(req.params(":id"));

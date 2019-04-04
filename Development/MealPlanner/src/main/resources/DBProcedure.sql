@@ -94,7 +94,7 @@ delimiter //
 			SIGNAL SQLSTATE '45000'
                     SET MESSAGE_TEXT = 'non-unique intake_id';
         END IF;
-        IF recipeCanBeMade(NEW.user_id, NEW.recipe_id) < 1 THEN
+        IF recipeCanBeMade(NEW.user_id, NEW.recipe_id) < NEW.servings THEN
 			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You do not have the necessary stock';
 		END IF;
         CALL update_stock_after_recipe_intake(NEW.user_id, NEW.recipe_id, NEW.servings);

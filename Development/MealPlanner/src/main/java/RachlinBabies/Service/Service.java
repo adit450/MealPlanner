@@ -11,8 +11,7 @@ import java.util.logging.Logger;
  * @param <M> The Model being operated on.
  */
 public abstract class Service<M> {
-  // set to 1 for testing purposes.
-  static int userId = 1;
+  static int userId;
   static final Logger LOGGER = Logger.getLogger(Service.class.getName());
 
   /**

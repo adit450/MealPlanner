@@ -160,12 +160,6 @@ delimiter //
 		(5, 45362972, 3),
 		(5, 45018668, 3),
 		(5, 45001645, 2);
-        
-        INSERT INTO intake_recipe
-        (intake_id, user_id, recipe_id, servings, intake_time) VALUES
-        (11, 1, 1, 1, CURTIME()),
-        (12, 1, 3, 12, '2019-02-21 13:30:00'),
-        (13, 2, 2, 3, '2019-04-21 18:30:00');
 
 		INSERT INTO rating
 		(recipe_id, user_id, score)
@@ -180,6 +174,12 @@ delimiter //
 		(4, 1, '1'),
 		(4, 9, '2'),
 		(5, 4, '3');
+        
+        INSERT INTO intake_recipe
+        (intake_id, user_id, recipe_id, servings, intake_time) VALUES
+        (11, 1, 1, 1, CURTIME()),
+        (12, 1, 3, 3, '2019-02-21 13:30:00'),
+        (13, 2, 2, 12, '2019-04-21 18:30:00');
 
     END //
 

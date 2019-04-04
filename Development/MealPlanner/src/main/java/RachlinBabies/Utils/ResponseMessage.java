@@ -1,13 +1,13 @@
 package RachlinBabies.Utils;
 
-public class ResponseError {
+public class ResponseMessage {
   private String message;
 
-  public ResponseError(String message, String... args) {
+  public ResponseMessage(String message, String... args) {
     this.message = String.format(message, args);
   }
 
-  public ResponseError(Exception e) {
+  public ResponseMessage(Exception e) {
     this.message = e.getMessage();
   }
 

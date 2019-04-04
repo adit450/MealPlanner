@@ -4,9 +4,10 @@ import java.sql.Timestamp;
 
 import RachlinBabies.Model.Intake;
 import RachlinBabies.Service.IntakeDao;
-import RachlinBabies.Utils.ResponseError;
+import RachlinBabies.Utils.ResponseMessage;
 
 import static RachlinBabies.Utils.JsonUtil.json;
+import static RachlinBabies.Utils.JsonUtil.toJson;
 import static spark.Spark.*;
 
 class IntakeController {
@@ -22,37 +23,42 @@ class IntakeController {
         return intake;
       }
       res.status(404);
-      return new ResponseError(String.format("No intake with id %d found", id));
+      return new ResponseMessage(String.format("No intake with id %d found", id));
     }, json());
 
     post("/intakes", (req, res) -> {
       Intake intake = new Intake.IntakeBuilder()
-              .sourceId(Integer.parseInt(req.queryParams(":source_id")))
-              .servings(Integer.parseInt(req.queryParams(":servings")))
-              .intakeType(req.queryParams(":type"))
-              .intakeDate(Timestamp.valueOf(req.queryParams(":intakeDate")))
+              .sourceId(Integer.parseInt(req.params(":source_id")))
+              .servings(Integer.parseInt(req.params(":servings")))
+              .intakeType(req.params(":type"))
+              .intakeDate(Timestamp.valueOf(req.params(":intakeDate")))
               .build();
       if (intakeService.create(intake)) {
-        return "Intake successfully inserted";
+        return new ResponseMessage("Intake successfully inserted");
       } else {
         res.status(400);
-        return new ResponseError("Failed to insert intake");
+        return new ResponseMessage("Failed to insert intake");
       }
     }, json());
 
     patch("/intakes/:id/time", (req, res) -> {
       Intake intake = new Intake.IntakeBuilder()
               .id(Integer.parseInt(req.params(":id")))
-              .intakeDate(Timestamp.valueOf(req.queryParams(":intakeDate")))
-              .intakeType(req.queryParams(":type"))
+              .intakeDate(Timestamp.valueOf(req.params(":intakeDate")))
+              .intakeType(req.params(":type"))
               .build();
       if (intakeService.updateIntakeTime(intake)) {
-        return "Intake successfully updated";
+        return new ResponseMessage("Intake successfully updated");
       } else {
         res.status(400);
-        return new ResponseError("Failed to update intake");
+        return new ResponseMessage("Failed to update intake");
       }
     }, json());
+
+    exception(Exception.class, (e, req, res) -> {
+      res.status(400);
+      res.body(toJson(new ResponseMessage(e)));
+    });
 
     /*
     delete("/intakes/:id", (req, res) -> {
@@ -60,10 +66,10 @@ class IntakeController {
       Intake intake = intakeService.get(id);
       if (intake == null) {
         res.status(404);
-        return new ResponseError(String.format("No intake with id %d found", id));
+        return new ResponseMessage(String.format("No intake with id %d found", id));
       } else if (!intakeService.delete(id)) {
         res.status(400);
-        return new ResponseError(String.format("Failed to delete intake with id %d", id));
+        return new ResponseMessage(String.format("Failed to delete intake with id %d", id));
       } else {
         return String.format("Intake %d successfully deleted", id);
       }

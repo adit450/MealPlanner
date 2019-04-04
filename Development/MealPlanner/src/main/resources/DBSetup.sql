@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`stock_item` (
   CONSTRAINT `fk_stock_item_product_stock1`
     FOREIGN KEY (`stock_id`)
     REFERENCES `mealplanner`.`product_stock` (`stock_id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 

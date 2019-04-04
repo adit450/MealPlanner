@@ -110,6 +110,8 @@ delimiter //
         
 		SET NEW.intake_id = IFNULL(NEW.intake_id, auto_increment_intake_id());
         SET NEW.intake_time = IFNULL(NEW.intake_time, CURTIME());
+        
+        
 		SELECT count(*) > 0 INTO notUnique
         FROM intake_recipe
         WHERE intake_id = NEW.intake_id;
@@ -117,7 +119,7 @@ delimiter //
 			SIGNAL SQLSTATE '45000'
                     SET MESSAGE_TEXT = 'non-unique intake_id';
         END IF;
-        
+
         SELECT NDB_Number INTO ndb FROM product_stock WHERE stock_id = NEW.stock_id;
         SELECT sum(quantity) >= NEW.servings INTO haveOnHand
         FROM stock_item JOIN product_stock USING (stock_id)

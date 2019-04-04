@@ -19,6 +19,7 @@ class IntakeController {
       int id = Integer.parseInt(req.params(":id"));
       Intake intake = intakeService.get(id);
       if (intake != null) {
+        res.type("application/json");
         return intake;
       }
       res.status(404);
@@ -27,10 +28,10 @@ class IntakeController {
 
     post("/intakes", (req, res) -> {
       Intake intake = new Intake.IntakeBuilder()
-              .sourceId(Integer.parseInt(req.queryParams(":source_id")))
-              .servings(Integer.parseInt(req.queryParams(":servings")))
-              .intakeType(req.queryParams(":type"))
-              .intakeDate(Timestamp.valueOf(req.queryParams(":intakeDate")))
+              .sourceId(Integer.parseInt(req.params(":source_id")))
+              .servings(Integer.parseInt(req.params(":servings")))
+              .intakeType(req.params(":type"))
+              .intakeDate(Timestamp.valueOf(req.params(":intakeDate")))
               .build();
       if (intakeService.create(intake)) {
         return "Intake successfully inserted";
@@ -43,8 +44,8 @@ class IntakeController {
     patch("/intakes/:id/time", (req, res) -> {
       Intake intake = new Intake.IntakeBuilder()
               .id(Integer.parseInt(req.params(":id")))
-              .intakeDate(Timestamp.valueOf(req.queryParams(":intakeDate")))
-              .intakeType(req.queryParams(":type"))
+              .intakeDate(Timestamp.valueOf(req.params(":intakeDate")))
+              .intakeType(req.params(":type"))
               .build();
       if (intakeService.updateIntakeTime(intake)) {
         return "Intake successfully updated";

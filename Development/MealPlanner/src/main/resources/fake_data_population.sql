@@ -90,100 +90,97 @@ delimiter //
 		(1, 5),
 		(5, 1);
 
-select * from intake_stock;
+		select * from intake_stock;
 
-INSERT INTO stock_item
-(quantity, expiration_date)
-VALUES
-(10, '2019-12-26 23:59:59'),
-(25, '2019-6-20 23:59:59'),
-(5, '2019-11-15 23:59:59'),
-(10, '2018-12-29 23:59:59'),
-(40, '2020-5-06 23:59:59'),
-(6, '2019-01-12 23:59:59'),
-(4, '2019-02-10 23:59:59'),
-(5, '2021-12-02 23:59:59'),
-(10, '2018-09-16 23:59:59'),
-(1, '2018-03-20 23:59:59');
+		INSERT INTO stock_item
+		(quantity, expiration_date)
+		VALUES
+		(10, '2019-12-26 23:59:59'),
+		(25, '2019-6-20 23:59:59'),
+		(5, '2019-11-15 23:59:59'),
+		(10, '2018-12-29 23:59:59'),
+		(40, '2020-5-06 23:59:59'),
+		(6, '2019-01-12 23:59:59'),
+		(4, '2019-02-10 23:59:59'),
+		(5, '2021-12-02 23:59:59'),
+		(10, '2018-09-16 23:59:59'),
+		(1, '2018-03-20 23:59:59');
 
-select * from stock_item;
+		select * from stock_item;
 
-INSERT INTO follow
-(follower_id, followee_id)
-VALUES
-(1, 10),
-(6, 8),
-(8, 6),
-(4, 2),
-(1, 9),
-(11, 3),
-(7, 1),
-(4, 9),
-(1, 5),
-(5, 1);
+		INSERT INTO follow
+		(follower_id, followee_id)
+		VALUES
+		(1, 10),
+		(6, 8),
+		(8, 6),
+		(4, 2),
+		(1, 9),
+		(11, 3),
+		(7, 1),
+		(4, 9),
+		(1, 5),
+		(5, 1);
 
-select * from follow;
+		select * from follow;
 
-DELETE from recipe;
+		DELETE from recipe;
 
-INSERT INTO recipe
-(recipe_id, creator_id, instructions, name, description, yield, created_at)
-VALUES
-(1, 7, "Place ice cream scoop in glass. Pour root beer over ice cream.", "Root Beer Float", "Root beer, ice cream", 1, '2018-12-08'),
-(2, 4, "Mix dry ingredients and wet ingredients separately. Slowly add wet ingredients to dry ingredients. 
-Place in an oiled pan and bake at 350 degrees until a knife comes out cleanly", "Brownies", "Brownie mix, egg, water, butter", 12, '2019-03-25'),
-(3, 11, "Lightly toast garlic and chilis in pan with olive oil. Turn off the heat and add pasta. 
-Squeeze lemon juice over top and garnish with parsley", "Pasta Aglio Olio", "Spaghetti, olive oil, garlic, chili pepper, lemon, parsley", 
-3, '2019-02-21'),
-(4, 8, "Place sugar in pot on medium heat. When sugar reaches 150 degrees, add cream and reduce heat. 
-Take off stove and allow to cool and harden.", "Caramel", "White sugar, cream", 8, '2018-10-09'),
-(5, 5, "Dip chicken first in egg, then in flour. Drop into oil at 350 degrees. Remove when exterior is crispy and golden brown",
-"Fried Chicken", "Boneless chicken, egg, wheat flour, canola oil", 4, '2019-01-02');
+		INSERT INTO recipe
+		(recipe_id, creator_id, instructions, name, description, yield, created_at)
+		VALUES
+		(1, 7, "Place ice cream scoop in glass. Pour root beer over ice cream.", "Root Beer Float", "Root beer, ice cream", 1, '2018-12-08'),
+		(2, 4, "Mix dry ingredients and wet ingredients separately. Slowly add wet ingredients to dry ingredients. 
+		Place in an oiled pan and bake at 350 degrees until a knife comes out cleanly", "Brownies", "Brownie mix, egg, water, butter", 12, '2019-03-25'),
+		(3, 11, "Lightly toast garlic and chilis in pan with olive oil. Turn off the heat and add pasta. 
+		Squeeze lemon juice over top and garnish with parsley", "Pasta Aglio Olio", "Spaghetti, olive oil, garlic, chili pepper, lemon, parsley", 
+		3, '2019-02-21'),
+		(4, 8, "Place sugar in pot on medium heat. When sugar reaches 150 degrees, add cream and reduce heat. 
+		Take off stove and allow to cool and harden.", "Caramel", "White sugar, cream", 8, '2018-10-09'),
+		(5, 5, "Dip chicken first in egg, then in flour. Drop into oil at 350 degrees. Remove when exterior is crispy and golden brown",
+		"Fried Chicken", "Boneless chicken, egg, wheat flour, canola oil", 4, '2019-01-02');
 
-select * from recipe;
+		select * from recipe;
 
-INSERT INTO recipe_has_product
-(recipe_id, NDB_Number, servings)
-VALUES
-(1, 45137355, 1),
-(1, 45181550, 1),
-(2, 45085287, 1),
-(2, 45263540, 1),
-(2, 45006044, 1),
-(3, 45028750, 1),
-(3, 45015429, 1),
-(3, 45182100, 4),
-(3, 45209597, 2),
-(3, 45060440, 1),
-(4, 45012164, 4),
-(4, 45148284, 1),
-(5, 45120912, 4),
-(5, 45362972, 3),
-(5, 45018668, 3),
-(5, 45001645, 2);
+		INSERT INTO recipe_has_product
+		(recipe_id, NDB_Number, servings)
+		VALUES
+		(1, 45137355, 1),
+		(1, 45181550, 1),
+		(2, 45085287, 1),
+		(2, 45263540, 1),
+		(2, 45006044, 1),
+		(3, 45028750, 1),
+		(3, 45015429, 1),
+		(3, 45182100, 4),
+		(3, 45209597, 2),
+		(3, 45060440, 1),
+		(4, 45012164, 4),
+		(4, 45148284, 1),
+		(5, 45120912, 4),
+		(5, 45362972, 3),
+		(5, 45018668, 3),
+		(5, 45001645, 2);
 
-INSERT INTO rating
-(recipe_id, user_id, score)
-VALUES
-(11, 8, '5'),
-(11, 4, '4'),
-(11, 11, '3'),
-(12, 4, '2'),
-(12, 1, '4'),
-(13, 3, '5'),
-(13, 10, '4'),
-(14, 1, '1'),
-(14, 9, '2'),
-(15, 4, '3');
+		INSERT INTO rating
+		(recipe_id, user_id, score)
+		VALUES
+		(11, 8, '5'),
+		(11, 4, '4'),
+		(11, 11, '3'),
+		(12, 4, '2'),
+		(12, 1, '4'),
+		(13, 3, '5'),
+		(13, 10, '4'),
+		(14, 1, '1'),
+		(14, 9, '2'),
+		(15, 4, '3');
 
 
-select * from recipe_has_product;
+		select * from recipe_has_product;
 
-select * from rating;
+		select * from rating;
+	END //
 
-END //
-
-delimiter;
-
+delimiter ;
 CALL init_db();
-CALL wipe_db(12);

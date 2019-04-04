@@ -96,7 +96,7 @@ CREATE INDEX `fk_recipe_user1_idx` ON `mealplanner`.`recipe` (`creator_id` ASC);
 -- Table `mealplanner`.`intake_recipe`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mealplanner`.`intake_recipe` (
-  `intake_id` INT NOT NULL,
+  `intake_id` INT NOT NULL DEFAULT 0,
   `user_id` INT NOT NULL,
   `recipe_id` INT NOT NULL,
   `servings` INT NOT NULL,
@@ -176,7 +176,7 @@ CREATE INDEX `fk_recipe_has_product_recipe1_idx` ON `mealplanner`.`recipe_has_pr
 CREATE TABLE IF NOT EXISTS `mealplanner`.`intake_stock` (
   `user_id` INT NOT NULL,
   `stock_id` INT NOT NULL,
-  `intake_id`INT NOT NULL,
+  `intake_id`INT NOT NULL DEFAULT 0,
   `intake_time` DATETIME NULL,
   `servings` INT NOT NULL,
   PRIMARY KEY (`intake_id`),

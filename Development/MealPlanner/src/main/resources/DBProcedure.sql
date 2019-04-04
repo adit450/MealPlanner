@@ -85,7 +85,7 @@ delimiter //
     FOR EACH ROW
     BEGIN
 		DECLARE notUnique TINYINT;
-		SET NEW.intake_id = IFNULL(NEW.intake_id, auto_increment_intake_id());
+		SET NEW.intake_id = IF(NEW.intake_id = 0, auto_increment_intake_id(), NEW.intake_id);
         SET NEW.intake_time = IFNULL(NEW.intake_time, CURTIME());
 		SELECT count(*) > 0 INTO notUnique
         FROM intake_recipe
@@ -108,7 +108,8 @@ delimiter //
 		DECLARE notUnique TINYINT;
         DECLARE ndb INT;
         
-		SET NEW.intake_id = IFNULL(NEW.intake_id, auto_increment_intake_id());
+		-- SET NEW.intake_id = IFNULL(NEW.intake_id, auto_increment_intake_id());
+        SET NEW.intake_id = IF(NEW.intake_id = 0, auto_increment_intake_id(), NEW.intake_id);
         SET NEW.intake_time = IFNULL(NEW.intake_time, CURTIME());
         
         

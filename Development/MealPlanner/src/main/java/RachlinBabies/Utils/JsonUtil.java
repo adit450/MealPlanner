@@ -1,6 +1,7 @@
 package RachlinBabies.Utils;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import spark.ResponseTransformer;
 
@@ -9,8 +10,12 @@ import spark.ResponseTransformer;
  */
 public class JsonUtil {
 
+  public static Gson dateGson() {
+    return new GsonBuilder().setDateFormat("EEE, d MMM yyyy HH:mm:ss").create();
+  }
+
   public static String toJson(Object object) {
-    return new Gson().toJson(object);
+    return dateGson().toJson(object);
   }
 
   public static ResponseTransformer json() {

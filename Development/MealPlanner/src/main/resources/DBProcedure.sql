@@ -159,9 +159,10 @@ delimiter //
 		DECLARE possibleServings DOUBLE;
         SELECT MIN(IFNULL((quantity / servings), 0)) * yield INTO possibleServings
 		FROM product JOIN recipe_has_product USING (NDB_Number)
-			LEFT JOIN (SELECT NDB_Number, quantity 
+			LEFT JOIN (SELECT NDB_Number, sum(quantity) as 'quantity'
 				FROM product_stock JOIN stock_item USING (stock_id) 
-                WHERE user_id = user) stocks USING (NDB_Number)
+                WHERE user_id = user
+                GROUP BY stock_id) stocks USING (NDB_Number)
 			JOIN recipe USING (recipe_id)
 		WHERE recipe_id = recipe;
 		RETURN possibleServings;

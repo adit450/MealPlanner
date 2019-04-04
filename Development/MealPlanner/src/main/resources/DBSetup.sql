@@ -85,8 +85,8 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`recipe` (
   CONSTRAINT `fk_recipe_user1`
     FOREIGN KEY (`creator_id`)
     REFERENCES `mealplanner`.`user` (`user_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 CREATE INDEX `fk_recipe_user1_idx` ON `mealplanner`.`recipe` (`creator_id` ASC);
@@ -130,13 +130,13 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`rating` (
   CONSTRAINT `fk_recipe_has_user_recipe1`
     FOREIGN KEY (`recipe_id`)
     REFERENCES `mealplanner`.`recipe` (`recipe_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_recipe_has_user_user1`
     FOREIGN KEY (`user_id`)
     REFERENCES `mealplanner`.`user` (`user_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 CREATE INDEX `fk_recipe_has_user_user1_idx` ON `mealplanner`.`rating` (`user_id` ASC);
@@ -160,8 +160,8 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`recipe_has_product` (
   CONSTRAINT `fk_recipe_has_product_product1`
     FOREIGN KEY (`NDB_Number`)
     REFERENCES `mealplanner`.`product` (`NDB_Number`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 CREATE INDEX `fk_recipe_has_product_product1_idx` ON `mealplanner`.`recipe_has_product` (`NDB_Number` ASC);
@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`stock_item` (
     FOREIGN KEY (`stock_id`)
     REFERENCES `mealplanner`.`product_stock` (`stock_id`)
     ON DELETE CASCADE
-    ON UPDATE NO ACTION)
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 CREATE INDEX `fk_stock_item_product_stock1_idx` ON `mealplanner`.`stock_item` (`stock_id` ASC);
@@ -234,13 +234,13 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`follow` (
   CONSTRAINT `fk_user_has_user_user1`
     FOREIGN KEY (`follower_id`)
     REFERENCES `mealplanner`.`user` (`user_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_user_has_user_user2`
     FOREIGN KEY (`followee_id`)
     REFERENCES `mealplanner`.`user` (`user_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 CREATE INDEX `fk_user_has_user_user2_idx` ON `mealplanner`.`follow` (`followee_id` ASC);

@@ -11,6 +11,7 @@ import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.Spark.patch;
 import static spark.Spark.post;
+import static spark.Spark.put;
 
 class IntakeController {
 
@@ -39,7 +40,7 @@ class IntakeController {
       }
     }, json());
 
-    patch("/intakes/:id/time", (req, res) -> {
+    put("/intakes/time", (req, res) -> {
       Intake intake = dateGson()
               .fromJson(req.body(), Intake.class);
       if (intakeService.updateIntakeTime(intake)) {

@@ -3,18 +3,18 @@ use mealplanner;
 delimiter //
 
     DROP PROCEDURE IF EXISTS wipe_db //
-    CREATE PROCEDURE wipe_db(thresh INT)
+    CREATE PROCEDURE wipe_db()
     BEGIN
 
         SET SQL_SAFE_UPDATES = 0;
-        DELETE FROM intake_stock WHERE user_id < thresh;
-        DELETE FROM intake_recipe WHERE user_id < thresh;
-        DELETE FROM product_stock WHERE user_id < thresh;
-        DELETE FROM recipe_has_product WHERE recipe_id < 6;
-        DELETE FROM rating WHERE recipe_id < 6;
-        DELETE FROM recipe WHERE creator_id < thresh;
-        DELETE FROM follow WHERE follower_id < thresh OR followee_id < thresh;
-        DELETE FROM user WHERE user_id < thresh;
+        DELETE FROM intake_stock;
+        DELETE FROM intake_recipe;
+        DELETE FROM product_stock;
+        DELETE FROM recipe_has_product;
+        DELETE FROM rating;
+        DELETE FROM recipe;
+        DELETE FROM follow;
+        DELETE FROM user;
         SET SQL_SAFE_UPDATES = 1;
 
     END //
@@ -26,7 +26,7 @@ delimiter //
 
     BEGIN
 
-        CALL wipe_db(12);
+        CALL wipe_db();
 
         INSERT INTO user
         (user_id, email, username, password)

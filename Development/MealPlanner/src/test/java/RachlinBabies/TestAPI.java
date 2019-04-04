@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import RachlinBabies.Model.Intake;
+import RachlinBabies.Service.IntakeService;
 import RachlinBabies.Service.Service;
 import spark.Spark;
 
@@ -54,6 +55,10 @@ public class TestAPI {
     String payload = toJson(intake);
     TestResponse res = request("POST", "/intakes", payload);
     assertEquals(200, res.status);
+    TestResponse res2 = request("GET", "/intakes");
+    List jsonArray = res2.jsonArray();
+    assertEquals(5, jsonArray.size());
+    assertEquals(200, res.status);
   }
 
   @Test
@@ -79,6 +84,10 @@ public class TestAPI {
             .build();
     String payload = toJson(intake);
     TestResponse res = request("POST", "/intakes", payload);
+    assertEquals(200, res.status);
+    TestResponse res2 = request("GET", "/intakes");
+    List jsonArray = res2.jsonArray();
+    assertEquals(5, jsonArray.size());
     assertEquals(200, res.status);
   }
 
@@ -125,5 +134,61 @@ public class TestAPI {
     userId.set(null, -1);
     TestResponse res = request("GET", "/intakes/");
     assertEquals(404, res.status);
+  }
+
+  @Test
+  public void testUpdateIntakeTimeSuccess() {
+    Timestamp newTime = Timestamp.from(Instant.now());
+    Intake intake = new Intake.IntakeBuilder()
+            .id(1)
+            .intakeDate(newTime)
+            .intakeType("STK")
+            .build();
+    String payload = toJson(intake);
+    TestResponse res = request("PUT", "/intakes/time", payload);
+    assertEquals(200, res.status);
+    assertEquals(newTime.toString().substring(0, 19),
+            new IntakeService().get(1).getIntakeDate().toString().substring(0, 19));
+  }
+
+  @Test
+  public void testUpdateIntakeTimeSuccessRecipe() {
+    Timestamp newTime = Timestamp.from(Instant.now());
+    Intake intake = new Intake.IntakeBuilder()
+            .id(12)
+            .intakeDate(newTime)
+            .intakeType("RCP")
+            .build();
+    String payload = toJson(intake);
+    TestResponse res = request("PUT", "/intakes/time", payload);
+    assertEquals(200, res.status);
+    assertEquals(newTime.toString().substring(0, 19),
+            new IntakeService().get(12).getIntakeDate().toString().substring(0, 19));
+  }
+
+  @Test
+  public void testUpdateIntakeTimeNotFoundRecipe() {
+    Timestamp newTime = Timestamp.from(Instant.now());
+    Intake intake = new Intake.IntakeBuilder()
+            .id(1)
+            .intakeDate(newTime)
+            .intakeType("RCP")
+            .build();
+    String payload = toJson(intake);
+    TestResponse res = request("PUT", "/intakes/time", payload);
+    assertEquals(400, res.status);
+  }
+
+  @Test
+  public void testUpdateIntakeTimeNotFoundStock() {
+    Timestamp newTime = Timestamp.from(Instant.now());
+    Intake intake = new Intake.IntakeBuilder()
+            .id(12)
+            .intakeDate(newTime)
+            .intakeType("STK")
+            .build();
+    String payload = toJson(intake);
+    TestResponse res = request("PUT", "/intakes/time", payload);
+    assertEquals(400, res.status);
   }
 }

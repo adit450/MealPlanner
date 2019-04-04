@@ -129,8 +129,8 @@ public class IntakeService extends Service<Intake> implements IntakeDao {
    */
   public boolean updateIntakeTime(Intake intakeWithTimestamp) {
     int result = 0;
-    String query = String.format("UPDATE %s SET %s = ? WHERE intake_id = ? AND user_id = ?",
-            TABLES.get(intakeWithTimestamp.getType()), FK.get(intakeWithTimestamp.getType()));
+    String query = String.format("UPDATE %s SET intake_time = ? WHERE intake_id = ? AND user_id = ?",
+            TABLES.get(intakeWithTimestamp.getType()));
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
       stmt.setTimestamp(1, intakeWithTimestamp.getIntakeDate());

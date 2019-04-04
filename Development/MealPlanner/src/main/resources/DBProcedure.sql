@@ -85,7 +85,7 @@ delimiter //
     FOR EACH ROW
     BEGIN
 		DECLARE notUnique TINYINT;
-		SET NEW.intake_id = IFNULL(NEW.intake_id, auto_increment_intake_id());
+		SET NEW.intake_id = IF(NEW.intake_id = 0, auto_increment_intake_id(), NEW.intake_id);
         SET NEW.intake_time = IFNULL(NEW.intake_time, CURTIME());
 		SELECT count(*) > 0 INTO notUnique
         FROM intake_recipe
@@ -94,7 +94,7 @@ delimiter //
 			SIGNAL SQLSTATE '45000'
                     SET MESSAGE_TEXT = 'non-unique intake_id';
         END IF;
-        IF recipeCanBeMade(NEW.user_id, NEW.recipe_id) < 1 THEN
+        IF recipeCanBeMade(NEW.user_id, NEW.recipe_id) < NEW.servings THEN
 			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You do not have the necessary stock';
 		END IF;
         CALL update_stock_after_recipe_intake(NEW.user_id, NEW.recipe_id, NEW.servings);
@@ -108,7 +108,8 @@ delimiter //
 		DECLARE notUnique TINYINT;
         DECLARE ndb INT;
         
-		SET NEW.intake_id = IFNULL(NEW.intake_id, auto_increment_intake_id());
+		-- SET NEW.intake_id = IFNULL(NEW.intake_id, auto_increment_intake_id());
+        SET NEW.intake_id = IF(NEW.intake_id = 0, auto_increment_intake_id(), NEW.intake_id);
         SET NEW.intake_time = IFNULL(NEW.intake_time, CURTIME());
         
         

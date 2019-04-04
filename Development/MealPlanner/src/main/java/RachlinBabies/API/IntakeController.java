@@ -1,14 +1,17 @@
 package RachlinBabies.API;
 
-import java.sql.Timestamp;
-
 import RachlinBabies.Model.Intake;
 import RachlinBabies.Service.IntakeDao;
 import RachlinBabies.Utils.ResponseMessage;
 
+import static RachlinBabies.Utils.JsonUtil.dateGson;
 import static RachlinBabies.Utils.JsonUtil.json;
 import static RachlinBabies.Utils.JsonUtil.toJson;
-import static spark.Spark.*;
+import static spark.Spark.exception;
+import static spark.Spark.get;
+import static spark.Spark.patch;
+import static spark.Spark.post;
+import static spark.Spark.put;
 
 class IntakeController {
 
@@ -27,12 +30,8 @@ class IntakeController {
     }, json());
 
     post("/intakes", (req, res) -> {
-      Intake intake = new Intake.IntakeBuilder()
-              .sourceId(Integer.parseInt(req.params(":source_id")))
-              .servings(Integer.parseInt(req.params(":servings")))
-              .intakeType(req.params(":type"))
-              .intakeDate(Timestamp.valueOf(req.params(":intakeDate")))
-              .build();
+      Intake intake = dateGson()
+              .fromJson(req.body(), Intake.class);
       if (intakeService.create(intake)) {
         return new ResponseMessage("Intake successfully inserted");
       } else {
@@ -41,12 +40,9 @@ class IntakeController {
       }
     }, json());
 
-    patch("/intakes/:id/time", (req, res) -> {
-      Intake intake = new Intake.IntakeBuilder()
-              .id(Integer.parseInt(req.params(":id")))
-              .intakeDate(Timestamp.valueOf(req.params(":intakeDate")))
-              .intakeType(req.params(":type"))
-              .build();
+    put("/intakes/time", (req, res) -> {
+      Intake intake = dateGson()
+              .fromJson(req.body(), Intake.class);
       if (intakeService.updateIntakeTime(intake)) {
         return new ResponseMessage("Intake successfully updated");
       } else {

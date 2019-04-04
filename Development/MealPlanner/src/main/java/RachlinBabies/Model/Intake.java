@@ -9,10 +9,10 @@ import java.util.Map;
  */
 public class Intake {
 
-  private int id;
-  private int userId;
-  private int sourceId;
-  private int servings;
+  private Integer id;
+  private Integer userId;
+  private Integer sourceId;
+  private Integer servings;
   private Timestamp intakeDate;
   private IntakeType type;
 
@@ -42,7 +42,7 @@ public class Intake {
     }
   }
 
-  public Intake(int id, int userId, int sourceId, int servings,
+  public Intake(Integer id, Integer userId, Integer sourceId, Integer servings,
                  Timestamp intakeDate, IntakeType type) {
     this.id = id;
     this.userId = userId;
@@ -56,26 +56,26 @@ public class Intake {
    * Builder class for Intake.
    */
   public static class IntakeBuilder {
-    private int id;
-    private int userId;
-    private int sourceId;
-    private int servings;
+    private Integer id;
+    private Integer userId;
+    private Integer sourceId;
+    private Integer servings;
     private Timestamp intakeDate;
     private IntakeType type;
 
-    public IntakeBuilder id(int id) {
+    public IntakeBuilder id(Integer id) {
       this.id = id;
       return this;
     }
-    public IntakeBuilder userId(int userId) {
+    public IntakeBuilder userId(Integer userId) {
       this.userId = userId;
       return this;
     }
-    public IntakeBuilder sourceId(int sourceId) {
+    public IntakeBuilder sourceId(Integer sourceId) {
       this.sourceId = sourceId;
       return this;
     }
-    public IntakeBuilder servings(int servings) {
+    public IntakeBuilder servings(Integer servings) {
       this.servings = servings;
       return this;
     }
@@ -94,19 +94,19 @@ public class Intake {
     }
   }
 
-  public int getId() {
+  public Integer getId() {
     return id;
   }
 
-  public int getUserId() {
+  public Integer getUserId() {
     return userId;
   }
 
-  public int getSourceId() {
+  public Integer getSourceId() {
     return sourceId;
   }
 
-  public int getServings() {
+  public Integer getServings() {
     return servings;
   }
 

@@ -2,6 +2,8 @@ USE mealplanner;
 
 delimiter //
 
+	-- INTAKE PROCEDURES AND TRIGGERS --
+
 	DROP FUNCTION IF EXISTS auto_increment_intake_id //
 	CREATE FUNCTION auto_increment_intake_id()
     RETURNS INT DETERMINISTIC
@@ -117,7 +119,6 @@ delimiter //
         END IF;
         
         SELECT NDB_Number INTO ndb FROM product_stock WHERE stock_id = NEW.stock_id;
-        
         SELECT sum(quantity) >= NEW.servings INTO haveOnHand
         FROM stock_item JOIN product_stock USING (stock_id)
         WHERE stock_id = NEW.stock_id AND user_id = NEW.user_id
@@ -163,5 +164,7 @@ delimiter //
 		WHERE recipe_id = recipe;
 		RETURN possibleServings;
     END //
+    
+    -- END INTAKE PROCEDURES AND TRIGGERS --
     
 delimiter ;

@@ -1,4 +1,4 @@
-package RachlinBabies.DBUtils;
+package RachlinBabies.Utils;
 
 import java.io.InputStream;
 import java.util.Properties;

@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  */
 public abstract class Service<M> {
   // set to 1 for testing purposes.
-  static int userId;
+  static int userId = 1;
   static final Logger LOGGER = Logger.getLogger(Service.class.getName());
 
   /**

@@ -54,11 +54,15 @@ public class TestAPI {
             .build();
     String payload = toJson(intake);
     TestResponse res = request("POST", "/intakes", payload);
-    assertEquals(200, res.status);
+    if (res != null) {
+      assertEquals(200, res.status);
+    }
     TestResponse res2 = request("GET", "/intakes");
     List jsonArray = res2.jsonArray();
     assertEquals(5, jsonArray.size());
-    assertEquals(200, res.status);
+    if (res != null) {
+      assertEquals(200, res.status);
+    }
   }
 
   @Test
@@ -71,7 +75,9 @@ public class TestAPI {
             .build();
     String payload = toJson(intake);
     TestResponse res = request("POST", "/intakes", payload);
-    assertEquals(400, res.status);
+    if (res != null) {
+      assertEquals(400, res.status);
+    }
   }
 
   @Test
@@ -84,11 +90,15 @@ public class TestAPI {
             .build();
     String payload = toJson(intake);
     TestResponse res = request("POST", "/intakes", payload);
-    assertEquals(200, res.status);
+    if (res != null) {
+      assertEquals(200, res.status);
+    }
     TestResponse res2 = request("GET", "/intakes");
     List jsonArray = res2.jsonArray();
     assertEquals(5, jsonArray.size());
-    assertEquals(200, res.status);
+    if (res != null) {
+      assertEquals(200, res.status);
+    }
   }
 
   @Test
@@ -101,7 +111,9 @@ public class TestAPI {
             .build();
     String payload = toJson(intake);
     TestResponse res = request("POST", "/intakes", payload);
-    assertEquals(400, res.status);
+    if (res != null) {
+      assertEquals(400, res.status);
+    }
   }
 
   @Test
@@ -146,7 +158,9 @@ public class TestAPI {
             .build();
     String payload = toJson(intake);
     TestResponse res = request("PUT", "/intakes/time", payload);
-    assertEquals(200, res.status);
+    if (res != null) {
+      assertEquals(200, res.status);
+    }
     assertEquals(newTime.toString().substring(0, 19),
             new IntakeService().get(1).getIntakeDate().toString().substring(0, 19));
   }
@@ -161,7 +175,9 @@ public class TestAPI {
             .build();
     String payload = toJson(intake);
     TestResponse res = request("PUT", "/intakes/time", payload);
-    assertEquals(200, res.status);
+    if (res != null) {
+      assertEquals(200, res.status);
+    }
     assertEquals(newTime.toString().substring(0, 19),
             new IntakeService().get(12).getIntakeDate().toString().substring(0, 19));
   }
@@ -176,7 +192,9 @@ public class TestAPI {
             .build();
     String payload = toJson(intake);
     TestResponse res = request("PUT", "/intakes/time", payload);
-    assertEquals(400, res.status);
+    if (res != null) {
+      assertEquals(400, res.status);
+    }
   }
 
   @Test
@@ -189,6 +207,8 @@ public class TestAPI {
             .build();
     String payload = toJson(intake);
     TestResponse res = request("PUT", "/intakes/time", payload);
-    assertEquals(400, res.status);
+    if (res != null) {
+      assertEquals(400, res.status);
+    }
   }
 }

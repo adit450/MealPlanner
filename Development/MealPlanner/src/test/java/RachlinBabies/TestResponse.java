@@ -1,7 +1,5 @@
 package RachlinBabies;
 
-import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -19,25 +17,19 @@ import static RachlinBabies.Utils.JsonUtil.dateGson;
 import static junit.framework.Assert.fail;
 
 class TestResponse {
-  final String body;
+  private final String body;
   final int status;
-  static final Set<String> FAKE_METHODS;
 
-  static {
-    FAKE_METHODS = new HashSet<>();
-    FAKE_METHODS.add("PATCH");
-  }
-
-  TestResponse(int status, String body) {
+  private TestResponse(int status, String body) {
     this.status = status;
     this.body = body;
   }
 
-  Map<String,String> json() {
+  Map json() {
     return dateGson().fromJson(body, HashMap.class);
   }
 
-  List<String> jsonArray() { return dateGson().fromJson(body, ArrayList.class); }
+  List jsonArray() { return dateGson().fromJson(body, ArrayList.class); }
 
   static TestResponse request(String method, String path) {
     return request(method, path, null);
@@ -47,12 +39,7 @@ class TestResponse {
     try {
       URL url = new URL("http://localhost:4567" + path);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-      if (FAKE_METHODS.contains(method)) {
-        connection.setRequestProperty("X-HTTP-Method-Override", method);
-        connection.setRequestMethod("PUT");
-      } else {
-        connection.setRequestMethod(method);
-      }
+      connection.setRequestMethod(method);
       connection.setDoOutput(true);
       if (payload != null) {
         connection.setDoInput(true);

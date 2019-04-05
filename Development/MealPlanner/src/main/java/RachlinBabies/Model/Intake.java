@@ -42,7 +42,9 @@ public class Intake {
     }
   }
 
-  public Intake(Integer id, Integer userId, Integer sourceId, Integer servings,
+  public Intake() {}
+
+  private Intake(Integer id, Integer userId, Integer sourceId, Integer servings,
                  Timestamp intakeDate, IntakeType type) {
     this.id = id;
     this.userId = userId;

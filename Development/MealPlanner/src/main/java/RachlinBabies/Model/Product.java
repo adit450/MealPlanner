@@ -42,4 +42,8 @@ public class Product {
   public void setNutrients(Set<Nutrient> nutrients) {
     this.nutrients = nutrients;
   }
+
+  public void setIngredients(String ingredients) {
+    this.ingredients = ingredients;
+  }
 }

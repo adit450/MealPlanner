@@ -9,7 +9,6 @@ import static RachlinBabies.Utils.JsonUtil.json;
 import static RachlinBabies.Utils.JsonUtil.toJson;
 import static spark.Spark.exception;
 import static spark.Spark.get;
-import static spark.Spark.patch;
 import static spark.Spark.post;
 import static spark.Spark.put;
 

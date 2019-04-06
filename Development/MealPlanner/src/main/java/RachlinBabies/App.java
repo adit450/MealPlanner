@@ -10,5 +10,6 @@ public class App
       ControllerFactory.getRecipeController();
       ControllerFactory.getStockController();
       ControllerFactory.getStockItemController();
+      ControllerFactory.getUserController();
     }
 }

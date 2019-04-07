@@ -171,4 +171,14 @@ delimiter //
     
     -- END INTAKE PROCEDURES AND TRIGGERS --
     
+    DROP TRIGGER IF EXISTS cascade_delete //
+    CREATE TRIGGER cascade_delete BEFORE UPDATE ON user
+    FOR EACH ROW
+    BEGIN
+		IF NEW.deleted <> OLD.deleted THEN
+			UPDATE recipe SET deleted = NEW.deleted WHERE creator_id = NEW.user_id;
+        END IF;
+    END //
+    
 delimiter ;
+

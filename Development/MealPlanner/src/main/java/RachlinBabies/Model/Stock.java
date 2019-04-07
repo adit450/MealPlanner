@@ -53,16 +53,4 @@ public class Stock {
       return new Stock(this.stockId, this.userId, this.ndb, this.quantity, this.product);
     }
   }
-  
-  public Integer getStockId() {
-    return stockId;
-  }
-  
-  public Integer getUserId() {
-    return userId;
-  }
-
-  public Integer getNdb() {
-    return ndb;
-  }
 }

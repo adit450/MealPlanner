@@ -8,5 +8,7 @@ public class App
       ControllerFactory.getProductController();
       ControllerFactory.getIntakeController();
       ControllerFactory.getRecipeController();
+      ControllerFactory.getStockController();
+      ControllerFactory.getStockItemController();
     }
 }

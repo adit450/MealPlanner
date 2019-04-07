@@ -214,30 +214,28 @@ public class TestAPI {
 
   @Test
   public void testProductRequestNDBSuccess(){
-    TestResponse res = request("GET", "/product/45001530");
+    TestResponse res = request("GET", "/products/45001530");
     Map json = res.json();
     assertEquals("BARBECUE SAUCE", json.get("longName"));
   }
 
   @Test
   public void testProductRequestNDBFailure(){
-    TestResponse res = request("GET", "/product/00000000");
+    TestResponse res = request("GET", "/products/00000000");
     assertEquals(404, res.status);
   }
 
   @Test
   public void testProductRequestStringSuccess(){
-    TestResponse res = request("GET", "/products/milk");
+    TestResponse res = request("GET", "/products/search/milk");
     List jsonArray = res.jsonArray();
     assertEquals(7363, jsonArray.size());
   }
 
   @Test
   public void testProductRequestStringFailure(){
-    TestResponse res = request("GET", "/products/commiegobblediegook");
+    TestResponse res = request("GET", "/products/search/commiegobblediegook");
     Map json = res.json();
     assertEquals(0, json.size());
   }
-
-
 }

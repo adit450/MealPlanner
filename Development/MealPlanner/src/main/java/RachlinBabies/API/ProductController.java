@@ -10,12 +10,12 @@ import static spark.Spark.get;
 class ProductController {
 
     ProductController(final ProductDao productService) {
-        get("/products/:name", (req, res) -> {
+        get("/products/search/:name", (req, res) -> {
             String name = req.params(":name");
             return productService.searchProduct(name);
         }, json());
 
-        get("/product/:ndb", (req, res) -> {
+        get("/products/:ndb", (req, res) -> {
             int ndb = Integer.parseInt(req.params(":ndb"));
             Product product = productService.get(ndb);
             if (product != null) {

@@ -171,6 +171,23 @@ delimiter //
     
     -- END INTAKE PROCEDURES AND TRIGGERS --
     
+    -- BEGIN STOCK PROCEDURES AND TRIGGERS --
+    
+	DROP TRIGGER IF EXISTS before_insert_stock_item //
+    CREATE TRIGGER before_insert_stock_item BEFORE INSERT ON stock_item
+    FOR EACH ROW
+    BEGIN
+		DECLARE lifetime INT;
+		IF NEW.expiration_date IS NULL THEN
+			SELECT expr_rate INTO lifetime 
+            FROM product JOIN product_stock USING(NDB_Number)
+            WHERE stock_id = NEW.stock_id;
+            SET NEW.expiration_date = DATE_ADD(CURDATE(), INTERVAL lifetime day);
+        END IF;
+    END //
+    
+    -- END STOCK PROCEDURES AND TRIGGERS --
+    
     DROP TRIGGER IF EXISTS cascade_delete //
     CREATE TRIGGER cascade_delete BEFORE UPDATE ON user
     FOR EACH ROW
@@ -181,4 +198,7 @@ delimiter //
     END //
     
 delimiter ;
+
+describe stock_item;
+
 

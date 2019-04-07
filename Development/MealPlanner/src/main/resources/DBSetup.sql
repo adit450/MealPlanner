@@ -205,7 +205,7 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`stock_item` (
   `stock_item_id` INT NOT NULL AUTO_INCREMENT,
   `stock_id` INT NOT NULL,
   `quantity` INT NOT NULL,
-  `expiration_date` DATE NOT NULL,
+  `expiration_date` DATE,
   PRIMARY KEY(`stock_item_id`),
   CONSTRAINT `fk_stock_item_product_stock1`
     FOREIGN KEY (`stock_id`)

@@ -12,7 +12,7 @@ public class Recipe {
   private String name;
   private String descriptions;
   private Integer yield;
-  private Timestamp createdOnDate;
+  private Timestamp dateCreated;
   private Set<RecipeProduct> ingredients;
 
   public class RecipeProduct {
@@ -20,6 +20,7 @@ public class Recipe {
     int servings;
 
     public RecipeProduct(){}
+
     public RecipeProduct(Product product, int servings){
       this.product = product;
       this.servings = servings;
@@ -37,7 +38,39 @@ public class Recipe {
     this.name = name;
     this.descriptions = descriptions;
     this.yield = yield;
-    this.createdOnDate = date;
+    this.dateCreated = date;
+  }
+
+  public int getRecipeId() {
+    return recipeId;
+  }
+
+  public int getUserId() {
+    return userId;
+  }
+
+  public String getInstructions() {
+    return instructions;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getDescriptions() {
+    return descriptions;
+  }
+
+  public int getYield() {
+    return yield;
+  }
+
+  public Timestamp dateCreated() {
+    return dateCreated;
+  }
+
+  public Set<RecipeProduct> getIngredients() {
+    return ingredients;
   }
 
   public void setIngredients(Set<RecipeProduct> ingredients) {
@@ -45,7 +78,7 @@ public class Recipe {
   }
 
   /**
-   * Builder class for Intake.
+   * Builder class for Recipe.
    */
   public static class RecipeBuilder {
 
@@ -55,7 +88,7 @@ public class Recipe {
     private String name;
     private String descriptions;
     private int yield;
-    private Timestamp createdOnDate;
+    private Timestamp dateCreated;
 
 
     public RecipeBuilder recipeId(int recipeId) {
@@ -83,8 +116,8 @@ public class Recipe {
       return this;
     }
 
-    public RecipeBuilder createdOnDate(Timestamp createdOnDate) {
-      this.createdOnDate = createdOnDate;
+    public RecipeBuilder dateCreated(Timestamp dateCreated) {
+      this.dateCreated = dateCreated;
       return this;
     }
 
@@ -95,38 +128,8 @@ public class Recipe {
 
     public Recipe build() {
       return new Recipe(this.recipeId, this.userId, this.instructions, this.name,
-              this.descriptions, this.yield, this.createdOnDate);
+              this.descriptions, this.yield, this.dateCreated);
     }
-
-
-    public int getRecipeId() {
-      return recipeId;
-    }
-
-    public int getUserId() {
-      return userId;
-    }
-
-    public String getInstructions() {
-      return instructions;
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public String getDescriptions() {
-      return descriptions;
-    }
-
-    public int getYield() {
-      return yield;
-    }
-
-    public Timestamp getCreatedOnDate() {
-      return createdOnDate;
-    }
-
   }
 }
 

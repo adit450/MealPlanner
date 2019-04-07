@@ -238,6 +238,4 @@ public class TestAPI {
     Map json = res.json();
     assertEquals(0, json.size());
   }
-
-
 }

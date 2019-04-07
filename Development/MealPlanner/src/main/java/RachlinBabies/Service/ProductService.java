@@ -45,10 +45,10 @@ public class ProductService extends Service<Product> implements ProductDao {
     String productQuery = "SELECT NDB_Number, long_name, expr_rate, manufacturer, serving_size, serving_size_uom, household_serving_size, household_serving_size_uom, ingredients_english \n" +
             "FROM product JOIN serving_size ON (product.NDB_Number = serving_size.product_NDB_Number)\n" +
             "where NDB_Number = ?";
-    String nutrientQuery = "SELECT derivation_descript, nutrient_code, nutrient_name, output_value, output_uom\n" +
+    String nutrientQuery = "SELECT Derivation_Descript, nutrient_code, nutrient_name, output_value, output_uom\n" +
             "FROM nutrient\n" +
-            "JOIN derivation_code_description as derivation_descript \n" +
-            "ON (nutrient.derivation_code = derivation_descript.derivation_code)\n" +
+            "JOIN derivation_code_description as derivation_description \n" +
+            "ON (nutrient.derivation_code = derivation_description.derivation_code)\n" +
             "where product_ndb_number = ?";
     Set<Nutrient> nutrients = new HashSet<>();
     Connection connection = DatabaseConnection.getConnection();
@@ -89,7 +89,7 @@ public class ProductService extends Service<Product> implements ProductDao {
   }
 
   private Nutrient convertNutrient(ResultSet rs) throws SQLException {
-    return new Nutrient(rs.getString("derivation_description"),
+    return new Nutrient(rs.getString("Derivation_Descript"),
             rs.getInt("nutrient_code"),
             rs.getString("nutrient_name"),
             rs.getDouble("output_value"),

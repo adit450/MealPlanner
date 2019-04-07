@@ -233,11 +233,16 @@ public class TestAPI {
   }
 
   @Test
+  public void testProductRequestStringSuccessLimit(){
+    TestResponse res = request("GET", "/products/milk/20");
+    List jsonArray = res.jsonArray();
+    assertEquals(20, jsonArray.size());
+  }
+
+  @Test
   public void testProductRequestStringFailure(){
     TestResponse res = request("GET", "/products/commiegobblediegook");
     Map json = res.json();
     assertEquals(0, json.size());
   }
-
-
 }

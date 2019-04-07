@@ -228,7 +228,7 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
 
   public boolean deleteRecipe(int recipeId) {
     int result = 0;
-    String query = "DELETE FROM recipe WHERE recipe_id = ? AND user_id = ?";
+    String query = "UPDATE recipe SET deleted = TRUE WHERE recipe_id = ? AND user_id = ?";
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
       stmt.setInt(1, recipeId);

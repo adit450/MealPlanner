@@ -108,7 +108,6 @@ delimiter //
 		DECLARE notUnique TINYINT;
         DECLARE ndb INT;
         
-		-- SET NEW.intake_id = IFNULL(NEW.intake_id, auto_increment_intake_id());
         SET NEW.intake_id = IF(NEW.intake_id = 0, auto_increment_intake_id(), NEW.intake_id);
         SET NEW.intake_time = IFNULL(NEW.intake_time, CURTIME());
         
@@ -227,6 +226,16 @@ delimiter //
     END //
     
     -- END STOCK PROCEDURES AND TRIGGERS --
+    -- BEGIN RECIPE PROCEDURES AND TRIGGERS --
+    
+    DROP TRIGGER IF EXISTS before_insert_recipe //
+    CREATE TRIGGER before_insert_recipe BEFORE INSERT ON recipe
+    FOR EACH ROW
+    BEGIN
+		SET NEW.created_at = CURDATE();
+    END //
+    
+    -- END RECIPE PROCEDURES AND TRIGGERS --
     
     DROP TRIGGER IF EXISTS cascade_delete //
     CREATE TRIGGER cascade_delete BEFORE UPDATE ON user

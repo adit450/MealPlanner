@@ -72,4 +72,20 @@ public abstract class DatabaseConnection {
       LOGGER.log(Level.SEVERE, e.getMessage(), e);
     }
   }
+
+  public static void setAutoCommit(Connection connection, boolean bool) {
+    try {
+      connection.setAutoCommit(bool);
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    }
+  }
+
+  public static void rollback(Connection connection) {
+    try {
+      connection.rollback();
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    }
+  }
 }

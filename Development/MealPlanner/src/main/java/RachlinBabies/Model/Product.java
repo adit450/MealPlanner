@@ -46,4 +46,8 @@ public class Product {
   public void setIngredients(String ingredients) {
     this.ingredients = ingredients;
   }
+
+  public int getNdb() {
+    return ndb;
+  }
 }

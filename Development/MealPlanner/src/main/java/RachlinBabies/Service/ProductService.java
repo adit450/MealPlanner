@@ -18,17 +18,23 @@ import RachlinBabies.Utils.DatabaseConnection;
  */
 public class ProductService extends Service<Product> implements ProductDao {
 
-  public List<Product> searchProduct(String name) {
+  public List<Product> searchProduct(String name, Integer limit) {
     List<Product> products = null;
     String query = "SELECT NDB_Number, long_name, expr_rate, manufacturer, serving_size, " +
             "serving_size_uom, household_serving_size, household_serving_size_uom\n" +
             "FROM product JOIN serving_size ON (product.NDB_Number = serving_size.product_NDB_Number)\n" +
             "where long_name like ?\n" +
             "ORDER BY long_name";
+    if (limit != null) {
+      query = query + "\nLIMIT ?";
+    }
     String param = String.format("%%%s%%", name);
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
       stmt.setString(1, param);
+      if (limit != null) {
+        stmt.setInt(2, limit);
+      }
       try (ResultSet rs = stmt.executeQuery()) {
         products = convertList(rs);
       }

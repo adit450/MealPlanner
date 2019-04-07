@@ -187,6 +187,16 @@ delimiter //
     END //
     
     -- END STOCK PROCEDURES AND TRIGGERS --
+    -- BEGIN RECIPE PROCEDURES AND TRIGGERS --
+    
+    DROP TRIGGER IF EXISTS before_insert_recipe //
+    CREATE TRIGGER before_insert_recipe BEFORE INSERT ON recipe
+    FOR EACH ROW
+    BEGIN
+		SET NEW.created_at = CURDATE();
+    END //
+    
+    -- END RECIPE PROCEDURES AND TRIGGERS --
     
     DROP TRIGGER IF EXISTS cascade_delete //
     CREATE TRIGGER cascade_delete BEFORE UPDATE ON user
@@ -198,7 +208,3 @@ delimiter //
     END //
     
 delimiter ;
-
-describe stock_item;
-
-

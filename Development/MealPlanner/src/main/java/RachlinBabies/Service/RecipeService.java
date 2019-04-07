@@ -1,265 +1,263 @@
 package RachlinBabies.Service;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
-import java
-        .sql.PreparedStatement;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
-import java.util.Hashtable;
+import java.sql.Statement;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 import RachlinBabies.Model.Product;
-import RachlinBabies.Utils.DatabaseConnection;
 import RachlinBabies.Model.Recipe;
+import RachlinBabies.Utils.DatabaseConnection;
+
+import static RachlinBabies.Utils.DatabaseConnection.rollback;
+import static RachlinBabies.Utils.DatabaseConnection.setAutoCommit;
 
 /**
  * Service class that holds all the queries to the database that relate to Intakes.
  */
 public class RecipeService extends Service<Recipe> implements RecipeDao {
 
+  private static final String SELECT_RECIPES = "SELECT recipe_id, creator_id, " +
+          "instructions, name, description, yield, created_at " +
+          "FROM recipe WHERE !deleted";
 
+  public Recipe getRecipe(int recipeId) {
+    Recipe recipe = null;
+    Set<Recipe.RecipeProduct> ingredients = new HashSet<>();
+    String query = "SELECT * FROM recipe WHERE recipe_id = ? AND !deleted";
+    String getIngredients = "SELECT rp.*, long_name, expr_rate, manufacturer, serving_size, " +
+            "serving_size_uom, household_serving_size, household_serving_size_uom " +
+            "FROM recipe_has_product rp JOIN product p USING (NDB_Number) " +
+            "JOIN serving_size ss ON (p.NDB_Number = ss.product_NDB_Number) " +
+            "WHERE recipe_id = ?";
 
-    /**
-     * Inserts a new Recipe into the database.
-     *
-     * @param toInsert The recipe to insert
-     * @return whether or not the insert was successful.
-     */
-
-    public boolean create(Recipe toInsert) {
-
-        /**
-        int result = 0;
-        String query = String.format(
-                "INSERT INTO (recipe_id, creator_id, instructions, name, description,yield, created_at, ingredients) VALUES (?,?,?,?,?,?,?,?)",
-                TABLES.get(toInsert.getType()), FK.get(toInsert.getType()));
-        Connection connection = DatabaseConnection.getConnection();
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, recipeId);
-            stmt.setInt(2, toInsert.getUserId());
-            stmt.setString(3, toInsert.getInstructions());
-            stmt.setString(4, toInsert.getName());
-            stmt.setString(5, toInsert.getDescription);
-            stmt.setString(6, toInsert.getYield);
-            stmt.setTimestamp(7, toInsert.getCreatedOnDate());
-            // stmt.setList(8, toInsert.getCreatedOnDate());
-
-
-
-            result = stmt.executeUpdate();
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        } finally {
-            DatabaseConnection.closeConnection(connection);
+    Connection connection = DatabaseConnection.getConnection();
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+      stmt.setInt(1, recipeId);
+      try (ResultSet rs = stmt.executeQuery()) {
+        if (rs.first()) {
+          recipe = convert(rs);
         }
-        return result > 0;
-
-     */
-
-    return true;
-
-    }
-
-
-    /**
-     * Returns the Recipe with the given recipeId.
-     * @param recipeId the id of the recipe to return.
-     * @return the specified Recipe
-     */
-    public Recipe get(int recipeId) {
-        Recipe ans = null;
-        String query = "SELECT * FROM recipe WHERE recipe_id = ? and !deleted";
-
-        Connection connection = DatabaseConnection.getConnection();
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, recipeId);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.first()) {
-                    ans = convert(rs);
-                }
+      }
+      if (recipe != null) {
+        try (PreparedStatement stmt2 = connection.prepareStatement(getIngredients)) {
+          stmt.setInt(1, recipeId);
+          try (ResultSet rs = stmt2.executeQuery()) {
+            Product product;
+            while (rs.next()) {
+              product = new ProductService().convert(rs);
+              ingredients.add(new Recipe.RecipeProduct(product, rs.getInt("servings")));
             }
-        } catch(SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        } finally {
-            DatabaseConnection.closeConnection(connection);
+          }
         }
-        return ans;
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    } finally {
+      DatabaseConnection.closeConnection(connection);
     }
+    return recipe;
+  }
 
-    /**
-     * Gets all the Recipes in the database
-     *
-     * @return List of all recipes
-     */
-    public List<Recipe> getAll() {
-        List<Recipe> recipes = null;
+  public List<Recipe> myRecipes() {
+    List<Recipe> recipes = null;
 
-        String query = "SELECT recipe_id, creator_id, instructions, name, description,yield, created_at FROM recipe WHERE !deleted";
+    String query = SELECT_RECIPES + " AND user_id = ?";
 
-        Connection connection = DatabaseConnection.getConnection();
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            try(ResultSet rs = stmt.executeQuery()){
-                recipes = convertList(rs);
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        } finally {
-            DatabaseConnection.closeConnection(connection);
+    Connection connection = DatabaseConnection.getConnection();
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+      stmt.setInt(1, userId);
+      try (ResultSet rs = stmt.executeQuery()) {
+        recipes = convertList(rs);
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    } finally {
+      DatabaseConnection.closeConnection(connection);
+    }
+    return recipes;
+  }
+
+
+  public List<Recipe> searchRecipes(String name) {
+    List<Recipe> recipes = null;
+    String query = SELECT_RECIPES + " AND name LIKE ?";
+    String param = String.format("%%%s%%", name);
+    Connection connection = DatabaseConnection.getConnection();
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+      stmt.setString(1, param);
+      try (ResultSet rs = stmt.executeQuery()) {
+        recipes = convertList(rs);
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    } finally {
+      DatabaseConnection.closeConnection(connection);
+    }
+    return recipes;
+  }
+
+  public List<Recipe> getByStock() {
+    List<Recipe> recipes = null;
+
+    String query = SELECT_RECIPES + " AND recipeCanBeMade(?,recipe_id)";
+
+    Connection connection = DatabaseConnection.getConnection();
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+      stmt.setInt(1, userId);
+      try (ResultSet rs = stmt.executeQuery()) {
+        recipes = convertList(rs);
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    } finally {
+      DatabaseConnection.closeConnection(connection);
+    }
+    return recipes;
+  }
+
+  public boolean createRecipe(Recipe toInsert) {
+    boolean success = false;
+    int recipeId = 0;
+    String query = "INSERT INTO recipe(creator_id, instructions, name, description, yield) " +
+            "VALUES (?,?,?,?,?)";
+    Connection connection = DatabaseConnection.getConnection();
+    try {
+      connection.setAutoCommit(false);
+      try (PreparedStatement stmt = connection.prepareStatement(query,
+              Statement.RETURN_GENERATED_KEYS)) {
+        stmt.setInt(1, userId);
+        stmt.setString(2, toInsert.getInstructions());
+        stmt.setString(3, toInsert.getName());
+        stmt.setString(4, toInsert.getDescriptions());
+        stmt.setInt(5, toInsert.getYield());
+        stmt.executeUpdate();
+        try (ResultSet rs = stmt.getGeneratedKeys()) {
+          if (rs.first()) {
+            recipeId = rs.getInt(1);
+          }
         }
-        return recipes;
+      }
+      if (recipeId != 0) {
+        success = replaceIngredients(recipeId, toInsert.getIngredients(), connection);
+      }
+      if (success) {
+        connection.commit();
+      } else {
+        connection.rollback();
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+      rollback(connection);
+    } finally {
+      setAutoCommit(connection, true);
+      DatabaseConnection.closeConnection(connection);
     }
+    return success;
+  }
 
-
-    /**
-     * Gets a the list of recipes created by the given user
-     *
-     * @return List of all recipes created by the given user
-     */
-    public List<Recipe> myRecipes(int userId) {
-        List<Recipe> recipes = null;
-
-        String query = "SELECT recipe_id, creator_id, instructions, name, description,yield, created_at FROM recipe WHERE creator_id = ? and and !deleted";
-
-        Connection connection = DatabaseConnection.getConnection();
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            try(ResultSet rs = stmt.executeQuery()){
-                recipes = convertList(rs);
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        } finally {
-            DatabaseConnection.closeConnection(connection);
+  public boolean updateRecipe(Recipe toUpdate) {
+    boolean updated = false;
+    int recipeId = toUpdate.getRecipeId();
+    String query = "UPDATE recipe SET name = ?, description = ?, yield = ?, instructions =? " +
+            "WHERE creator_id = ? AND recipe_id = ?";
+    Connection connection = DatabaseConnection.getConnection();
+    try {
+      connection.setAutoCommit(false);
+      try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        stmt.setString(1, toUpdate.getName());
+        stmt.setString(2, toUpdate.getDescriptions());
+        stmt.setInt(3, toUpdate.getYield());
+        stmt.setString(4, toUpdate.getInstructions());
+        if (stmt.executeUpdate() > 0) {
+          updated = replaceIngredients(recipeId, toUpdate.getIngredients(), connection);
         }
-        return recipes;
+      }
+      if (updated) {
+        connection.commit();
+      } else {
+        connection.rollback();
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+      rollback(connection);
+    } finally {
+      setAutoCommit(connection, true);
+      DatabaseConnection.closeConnection(connection);
     }
+    return updated;
+  }
 
-
-    /**
-     * Searches for recipes by name
-     *
-     * @return List of recipes that match keywords entered by user
-     */
-    public List<Recipe> SearchByName(String keywords) {
-        List<Recipe> recipes = null;
-
-        String query = "SELECT recipe_id, creator_id, instructions, name, description,yield, created_at FROM recipe WHERE name like ? and !deleted";
-
-        String param = String.format("%%%s%%", keywords);
-        Connection connection = DatabaseConnection.getConnection();
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, param);
-            try(ResultSet rs = stmt.executeQuery()){
-                recipes = convertList(rs);
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        } finally {
-            DatabaseConnection.closeConnection(connection);
+  /**
+   * Helper method that clears ingredients related to a recipe and then inserts new values.
+   * @param recipeId the id of the related recipe
+   * @param ingredients the ingredients to insert
+   * @param connection the JDBC connection
+   * @return if the insert was successful.
+   */
+  private boolean replaceIngredients(int recipeId, Set<Recipe.RecipeProduct> ingredients,
+                                    Connection connection) {
+    boolean success = false;
+    int ingredientInserts = 0;
+    String insertIngredients = "INSERT INTO recipe_has_product VALUES (?,?,?)";
+    String clearIngredients = "DELETE FROM recipe_has_product WHERE recipe_id = ?";
+    try {
+      try (PreparedStatement stmt = connection.prepareStatement(clearIngredients)) {
+        stmt.setInt(1, recipeId);
+        stmt.executeUpdate();
+      }
+      try (PreparedStatement stmt = connection.prepareStatement(insertIngredients)) {
+        for (Recipe.RecipeProduct rp : ingredients) {
+          stmt.setInt(1, recipeId);
+          stmt.setInt(2, rp.getProduct().getNdb());
+          stmt.setInt(3, rp.getServings());
+          ingredientInserts += stmt.executeUpdate();
         }
-        return recipes;
+        success = ingredientInserts == ingredients.size();
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
     }
+    return success;
+  }
 
-    /**
-     * Returns a list of all recipes that can be made based on the users ingredients
-     *
-     * @return list of all recipes that can be made based on the users ingredients
-     */
-    public List<Recipe> getByStock(int userId) {
-        List<Recipe> recipes = null;
-
-        String query = "SELECT recipe_id, creator_id, instructions, name, description,yield, created_at FROM recipe WHERE recipeCanBeMade(?,recipe_id) and !deleted";
-
-        Connection connection = DatabaseConnection.getConnection();
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            try(ResultSet rs = stmt.executeQuery()){
-                recipes = convertList(rs);
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        } finally {
-            DatabaseConnection.closeConnection(connection);
-        }
-        return recipes;
+  public boolean deleteRecipe(int recipeId) {
+    int result = 0;
+    String query = "DELETE FROM recipe WHERE recipe_id = ? AND user_id = ?";
+    Connection connection = DatabaseConnection.getConnection();
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+      stmt.setInt(1, recipeId);
+      stmt.setInt(2, userId);
+      result = stmt.executeUpdate();
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    } finally {
+      DatabaseConnection.getConnection();
     }
+    return result > 0;
+  }
 
-
-
-    /**
-     * Updates the Intake time of the intake specified with the id.  Requires intake_id, new time,
-     * and the type.
-     * @param intakeWithTimestamp the intake with the desired Timestamp.  Only the timestamp will
-     *                            be updated.
-     * @return whether or not the update was successful.
-     */
-    public boolean updateRecipe(Recipe intakeWithTimestamp) {
-
-        /**
-
-        int result = 0;
-        String query = String.format("UPDATE %s SET intake_time = ? WHERE intake_id = ? AND user_id = ?",
-                TABLES.get(intakeWithTimestamp.getType()));
-        Connection connection = DatabaseConnection.getConnection();
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setTimestamp(1, intakeWithTimestamp.getIntakeDate());
-            stmt.setInt(2, intakeWithTimestamp.getId());
-            stmt.setInt(3, userId);
-            result = stmt.executeUpdate();
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        } finally {
-            DatabaseConnection.closeConnection(connection);
-        }
-        return result > 0;
-    }
-     */
-    /**
-     * Deletes the specified intake.
-     * @param recipeId the intakeId fo the desired intake to delete
-     * @return if the delete was successful
-     */
-
-    return true;
-    }
-    public boolean delete(int intakeId) {
-        int rowsChanged = 0;
-        String query = "CALL delete_intake(?,?,?)";
-        Connection connection = DatabaseConnection.getConnection();
-        try (CallableStatement stmt = connection.prepareCall(query)) {
-            stmt.setInt(1, intakeId);
-            stmt.setInt(2, userId);
-            stmt.registerOutParameter(3, Types.INTEGER);
-            stmt.executeUpdate();
-            rowsChanged = stmt.getInt(3);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        } finally {
-            DatabaseConnection.closeConnection(connection);
-        }
-        return rowsChanged > 0;
-    }
-
-    /**
-     * Extracts an Intake Model from the ResultSet
-     * @param rs the ResultSet
-     * @return the Intake made from the ResultSet
-     * @throws SQLException when JDBC dies
-     */
-    Recipe convert(ResultSet rs) throws SQLException {
-        return new Recipe.RecipeBuilder()
-                .recipeId(rs.getInt("recipe_id"))
-                .userId(rs.getInt("creator_id"))
-                .instructions(rs.getString("instructions"))
-                .name(rs.getString("name"))
-                .descriptions(rs.getString("description"))
-                .yield(rs.getInt("yield"))
-                .createdOnDate(rs.getTimestamp("created_at"))
-                .build();
-    }
+  /**
+   * Extracts an Intake Model from the ResultSet
+   *
+   * @param rs the ResultSet
+   * @return the Intake made from the ResultSet
+   * @throws SQLException when JDBC dies
+   */
+  Recipe convert(ResultSet rs) throws SQLException {
+    return new Recipe.RecipeBuilder()
+            .recipeId(rs.getInt("recipe_id"))
+            .userId(rs.getInt("creator_id"))
+            .instructions(rs.getString("instructions"))
+            .name(rs.getString("name"))
+            .descriptions(rs.getString("description"))
+            .yield(rs.getInt("yield"))
+            .dateCreated(rs.getTimestamp("created_at"))
+            .build();
+  }
 }

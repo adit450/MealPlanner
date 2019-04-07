@@ -15,7 +15,7 @@ public class Recipe {
   private Timestamp dateCreated;
   private Set<RecipeProduct> ingredients;
 
-  public class RecipeProduct {
+  public static class RecipeProduct {
     Product product;
     int servings;
 
@@ -24,6 +24,14 @@ public class Recipe {
     public RecipeProduct(Product product, int servings){
       this.product = product;
       this.servings = servings;
+    }
+
+    public Product getProduct() {
+      return product;
+    }
+
+    public int getServings() {
+      return servings;
     }
   }
 
@@ -45,10 +53,6 @@ public class Recipe {
     return recipeId;
   }
 
-  public int getUserId() {
-    return userId;
-  }
-
   public String getInstructions() {
     return instructions;
   }
@@ -63,10 +67,6 @@ public class Recipe {
 
   public int getYield() {
     return yield;
-  }
-
-  public Timestamp dateCreated() {
-    return dateCreated;
   }
 
   public Set<RecipeProduct> getIngredients() {

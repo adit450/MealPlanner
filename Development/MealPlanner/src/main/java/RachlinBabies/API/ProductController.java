@@ -1,13 +1,12 @@
 package RachlinBabies.API;
 
-import java.util.Map;
-
 import RachlinBabies.Model.Product;
 import RachlinBabies.Service.ProductDao;
 import RachlinBabies.Utils.ResponseMessage;
 
-import static RachlinBabies.Utils.JsonUtil.dateGson;
 import static RachlinBabies.Utils.JsonUtil.json;
+import static RachlinBabies.Utils.JsonUtil.toJson;
+import static spark.Spark.exception;
 import static spark.Spark.get;
 
 class ProductController {
@@ -34,5 +33,10 @@ class ProductController {
       res.status(404);
       return new ResponseMessage(String.format("No product with ndb %d found", ndb));
     }, json());
+
+    exception(Exception.class, (e, req, res) -> {
+      res.status(400);
+      res.body(toJson(new ResponseMessage(e)));
+    });
   }
 }

@@ -2,10 +2,12 @@ package RachlinBabies.API;
 
 import RachlinBabies.Service.IntakeService;
 import RachlinBabies.Service.ProductService;
+import RachlinBabies.Service.RecipeService;
 
 public abstract class ControllerFactory {
   private static IntakeController intake;
   private static ProductController product;
+  private static RecipeController recipe;
 
   private ControllerFactory() {}
 
@@ -21,5 +23,12 @@ public abstract class ControllerFactory {
       product = new ProductController(new ProductService());
     }
     return product;
+  }
+
+  public static RecipeController getRecipeController() {
+    if (recipe == null) {
+      recipe = new RecipeController(new RecipeService());
+    }
+    return recipe;
   }
 }

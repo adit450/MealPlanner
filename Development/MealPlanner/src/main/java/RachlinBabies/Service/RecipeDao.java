@@ -13,20 +13,14 @@ public interface RecipeDao {
      * @param  recipeId of the recipe
      * @return desired recipe
      */
-    Recipe get(int recipeId);
-
-    /**
-     * Get all the recipes visible to the session user.
-     * @return List of intakes
-     */
-    List<Recipe> getAll();
+    Recipe getRecipe(int recipeId);
 
     /**
      * Create a new Recipe
      * @param toInsert Model of the desired recipe to insert
      * @return whether or not the insert was successful.
      */
-    boolean create(Recipe toInsert);
+    boolean createRecipe(Recipe toInsert);
 
     /**
      * Updates the recipe time of the recipe specified with the id.  Requires intake_id and new time.
@@ -36,15 +30,30 @@ public interface RecipeDao {
      */
     boolean updateRecipe(Recipe intakeWithTimestamp);
 
-    //delete
+  /**
+   * Deletes the recipe with the given id.
+   * @param recipeId the id of the recipe to delete
+   * @return whether or not hte delete was successful.
+   */
+    boolean deleteRecipe(int recipeId);
 
-    // Gets all the recipes that can be created based on the ingredients we already have
-    List<Recipe> getByStock(int userId);
+    /**
+     * Get recipes that can be made with your stock.
+     * @return the recipes that you can make
+     */
+    List<Recipe> getByStock();
 
-    // Gets a the list of recipes created by the given user
-    List<Recipe> myRecipes(int userId);
+  /**
+   * Get recipes authored by the session user.
+   * @return the user's recipes
+   */
+    List<Recipe> myRecipes();
 
-    // Search By Name
-    List<Recipe> SearchByName(String keywords);
+  /**
+   * Search recipes by name
+   * @param name name to filter by.
+   * @return recipes matching search parameter.
+   */
+    List<Recipe> searchRecipes(String name);
 
 }

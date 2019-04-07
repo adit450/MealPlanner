@@ -16,6 +16,7 @@ import RachlinBabies.Utils.DatabaseConnection;
 
 import static RachlinBabies.Utils.DatabaseConnection.rollback;
 import static RachlinBabies.Utils.DatabaseConnection.setAutoCommit;
+import static RachlinBabies.Utils.JsonUtil.toJson;
 
 /**
  * Service class that holds all the queries to the database that relate to Intakes.
@@ -46,13 +47,14 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
       }
       if (recipe != null) {
         try (PreparedStatement stmt2 = connection.prepareStatement(getIngredients)) {
-          stmt.setInt(1, recipeId);
+          stmt2.setInt(1, recipeId);
           try (ResultSet rs = stmt2.executeQuery()) {
             Product product;
             while (rs.next()) {
               product = new ProductService().convert(rs);
               ingredients.add(new Recipe.RecipeProduct(product, rs.getInt("servings")));
             }
+            recipe.setIngredients(ingredients);
           }
         }
       }

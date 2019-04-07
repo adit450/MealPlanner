@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`user` (
   `email` VARCHAR(45) NOT NULL,
   `username` VARCHAR(45) NOT NULL,
   `password` VARCHAR(45) NOT NULL,
+  `deleted` TINYINT NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`user_id`))
 ENGINE = InnoDB;
 
@@ -81,6 +82,7 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`recipe` (
   `yield` INT NOT NULL,
   `image` BLOB NULL,
   `created_at` DATE NULL,
+  `deleted` TINYINT NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`recipe_id`),
   CONSTRAINT `fk_recipe_user1`
     FOREIGN KEY (`creator_id`)
@@ -155,8 +157,8 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`recipe_has_product` (
   CONSTRAINT `fk_recipe_has_product_recipe1`
     FOREIGN KEY (`recipe_id`)
     REFERENCES `mealplanner`.`recipe` (`recipe_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_recipe_has_product_product1`
     FOREIGN KEY (`NDB_Number`)
     REFERENCES `mealplanner`.`product` (`NDB_Number`)
@@ -203,7 +205,7 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`stock_item` (
   `stock_item_id` INT NOT NULL AUTO_INCREMENT,
   `stock_id` INT NOT NULL,
   `quantity` INT NOT NULL,
-  `expiration_date` DATE NOT NULL,
+  `expiration_date` DATE,
   PRIMARY KEY(`stock_item_id`),
   CONSTRAINT `fk_stock_item_product_stock1`
     FOREIGN KEY (`stock_id`)

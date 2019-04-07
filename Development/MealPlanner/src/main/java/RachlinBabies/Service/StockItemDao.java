@@ -5,6 +5,14 @@ import java.util.List;
 import RachlinBabies.Model.StockItem;
 
 public interface StockItemDao {
+
+  /**
+   * Gets the stockItem with the given id.
+   * @param stockItemId the stockItemId
+   * @return the StockItem owned by the user.
+   */
+  StockItem getStockItem(int stockItemId);
+
   /**
    * Gets stock items of the same product, ordered by expiration date.
    * @param stockId stock id of the stock items

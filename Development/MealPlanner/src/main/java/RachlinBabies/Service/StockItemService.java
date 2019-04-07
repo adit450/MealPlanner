@@ -14,6 +14,29 @@ import RachlinBabies.Utils.DatabaseConnection;
 
 public class StockItemService extends Service<StockItem> implements StockItemDao {
 
+  public StockItem getStockItem(int stockItemId) {
+    StockItem stockItem = null;
+    String query = "SELECT stock_id, stock_item_id, quantity, expiration_date, NDB_Number " +
+            "FROM stock_item JOIN product_stock USING (stock_id) " +
+            "WHERE user_id = ? AND stock_item_id = ? " +
+            "LIMIT 1";
+    Connection connection = DatabaseConnection.getConnection();
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+      stmt.setInt(1, userId);
+      stmt.setInt(2, stockItemId);
+      try (ResultSet rs = stmt.executeQuery()) {
+        if (rs.first()) {
+          stockItem = convert(rs);
+        }
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    } finally {
+      DatabaseConnection.closeConnection(connection);
+    }
+    return stockItem;
+  }
+
   public List<StockItem> getStock(int stockId) {
     List<StockItem> stockItems = null;
     String query = "SELECT stock_id, stock_item_id, quantity, expiration_date, NDB_Number " +
@@ -76,7 +99,7 @@ public class StockItemService extends Service<StockItem> implements StockItemDao
   public boolean updateStockItem(StockItem stockItem) {
     int result = 0;
     String query = "UPDATE stock_item " +
-            "SET quantity = ? AND expiration_date = ? " +
+            "SET quantity = ?, expiration_date = ? " +
             "WHERE stock_item_id = ?";
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {

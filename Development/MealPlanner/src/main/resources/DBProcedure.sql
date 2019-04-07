@@ -186,6 +186,14 @@ delimiter //
         END IF;
     END //
     
+    DROP TRIGGER IF EXISTS before_update_stock_item //
+    CREATE TRIGGER before_update_stock_item BEFORE UPDATE ON stock_item
+    FOR EACH ROW
+    BEGIN
+		SET NEW.expiration_date = IFNULL(NEW.expiration_date, OLD.expiration_date);
+        SET NEW.quantity = IFNULL(NEW.quantity, OLD.quantity);
+    END //
+    
     DROP PROCEDURE IF EXISTS add_stock //
     CREATE PROCEDURE add_stock
     (

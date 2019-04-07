@@ -14,7 +14,7 @@ public class StockService extends Service<Stock> implements StockDao {
 
   public List<Stock> getStocks() {
     List<Stock> stocks = null;
-    String query = "SELECT stock.*, sum(quantity) as 'quantity'\n" +
+    String query = "SELECT stock.*, sum(quantity) as 'quantity',\n" +
             "long_name, expr_rate, manufacturer, serving_size,\n" +
             "serving_size_uom, household_serving_size, household_serving_size_uom\n" +
             "FROM product_stock stock\n" +

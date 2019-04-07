@@ -21,7 +21,7 @@ class RecipeController {
 
   RecipeController(final RecipeDao recipeService) {
 
-    get("/recipes/:id", (req, res) -> {
+    get("/recipes/detailed/:id", (req, res) -> {
       int recipeId = Integer.parseInt(req.params(":id"));
       Recipe recipe = recipeService.getRecipe(recipeId);
       if (recipe != null) {

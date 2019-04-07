@@ -69,7 +69,7 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
   public List<Recipe> myRecipes() {
     List<Recipe> recipes = null;
 
-    String query = SELECT_RECIPES + " AND user_id = ?";
+    String query = SELECT_RECIPES + " AND creator_id = ?";
 
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -230,7 +230,7 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
 
   public boolean deleteRecipe(int recipeId) {
     int result = 0;
-    String query = "UPDATE recipe SET deleted = TRUE WHERE recipe_id = ? AND user_id = ?";
+    String query = "UPDATE recipe SET deleted = TRUE WHERE recipe_id = ? AND creator_id = ?";
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
       stmt.setInt(1, recipeId);

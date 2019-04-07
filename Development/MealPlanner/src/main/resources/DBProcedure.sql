@@ -186,6 +186,46 @@ delimiter //
         END IF;
     END //
     
+    DROP TRIGGER IF EXISTS before_update_stock_item //
+    CREATE TRIGGER before_update_stock_item BEFORE UPDATE ON stock_item
+    FOR EACH ROW
+    BEGIN
+		SET NEW.expiration_date = IFNULL(NEW.expiration_date, OLD.expiration_date);
+        SET NEW.quantity = IFNULL(NEW.quantity, OLD.quantity);
+    END //
+    
+    DROP PROCEDURE IF EXISTS add_stock //
+    CREATE PROCEDURE add_stock
+    (
+		user INT,
+        ndb INT,
+        stockQuantity INT,
+        OUT rowsChanged INT
+    )
+    BEGIN
+		DECLARE stockId INT;
+        DECLARE sql_error TINYINT DEFAULT FALSE;
+        DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET sql_error = TRUE;
+        
+        SELECT stock_id INTO stockId
+        FROM product_stock
+        WHERE NDB_Number = ndb AND user_id = user
+        LIMIT 1;
+        START TRANSACTION;
+        IF stockId IS NULL THEN
+			INSERT INTO product_stock (NDB_Number, user_id) VALUES (ndb, user);
+            SET stockId = LAST_INSERT_ID();
+        END IF;
+        INSERT INTO stock_item (stock_id, quantity) VALUES (stockId, stockQuantity);
+        SET rowsChanged = 2;
+        IF !sql_error THEN
+			COMMIT;
+		ELSE
+			SET rowsChanged = 0;
+            ROLLBACK;
+        END IF;
+    END //
+    
     -- END STOCK PROCEDURES AND TRIGGERS --
     
     DROP TRIGGER IF EXISTS cascade_delete //
@@ -198,7 +238,3 @@ delimiter //
     END //
     
 delimiter ;
-
-describe stock_item;
-
-

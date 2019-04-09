@@ -293,6 +293,39 @@ CREATE TABLE IF NOT EXISTS `mealplanner`.`serving_size` (
 
 CREATE INDEX `fk_serving_size_product1_idx` ON `mealplanner`.`serving_size` (`product_NDB_Number` ASC);
 
+-- -----------------------------------------------------
+-- Table `mealplanner`.`tag`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mealplanner`.`tag` (
+  `tag_id` INT NOT NULL,
+  `tag_name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`tag_id`)
+  )
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `mealplanner`.`recipe_has_tag`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mealplanner`.`recipe_has_tag` (
+  `recipe_id` INT NOT NULL,
+  `tag_id` INT NOT NULL,
+  PRIMARY KEY (`recipe_id`, `tag_id`),
+  CONSTRAINT `fk_recipe_has_tag_recipe1`
+    FOREIGN KEY (`recipe_id`)
+    REFERENCES `mealplanner`.`recipe` (`recipe_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_recipe_has_tag_tag1`
+    FOREIGN KEY (`tag_id`)
+    REFERENCES `mealplanner`.`tag` (`tag_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_recipe_has_tag_recipe1_idx` ON `mealplanner`.`recipe_has_tag` (`recipe_id` ASC);
+
+CREATE INDEX `fk_recipe_has_tag_tag1_idx` ON `mealplanner`.`recipe_has_tag` (`tag_id` ASC);
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

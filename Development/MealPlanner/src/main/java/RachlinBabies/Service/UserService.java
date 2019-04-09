@@ -55,7 +55,7 @@ public class UserService extends Service<User> implements UserDao{
   @Override
   public User get(int id) {
     User rv = null;
-    String query = "select * from user where user_id = ?";
+    String query = "select * from user where user_id = ? and not deleted";
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
       stmt.setInt(1, id);
@@ -75,7 +75,7 @@ public class UserService extends Service<User> implements UserDao{
   @Override
   public List<User> getAll() {
     List<User> all = null;
-    String query = "select * from user";
+    String query = "select * from user where not deleted";
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
       try (ResultSet rs = stmt.executeQuery()) {
@@ -93,7 +93,7 @@ public class UserService extends Service<User> implements UserDao{
 
   public boolean login(String username, String password) {
     User usr= null;
-    String query = "select * from user where username = ? and password = ?";
+    String query = "select * from user where username = ? and password = ? and not deleted";
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
       stmt.setString(1, username);

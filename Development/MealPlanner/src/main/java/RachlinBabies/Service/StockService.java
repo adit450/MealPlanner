@@ -37,6 +37,37 @@ public class StockService extends Service<Stock> implements StockDao {
     return stocks;
   }
 
+  @Override
+  public Stock getStockById(int id) {
+    List<Stock> stocks = null;
+    String query = "SELECT stock.*, sum(quantity) as 'quantity',\n" +
+            "long_name, expr_rate, manufacturer, serving_size,\n" +
+            "serving_size_uom, household_serving_size, household_serving_size_uom\n" +
+            "FROM product_stock stock\n" +
+            "JOIN stock_item USING (stock_id)\n" +
+            "JOIN product p USING (NDB_Number)\n" +
+            "JOIN serving_size ss ON (p.NDB_Number = ss.product_NDB_Number)\n" +
+            "WHERE user_id = ? AND stock_id = ?\n" +
+            "GROUP BY stock_id";
+    Connection connection = DatabaseConnection.getConnection();
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+      stmt.setInt(1, userId);
+      stmt.setInt(2, id);
+      try (ResultSet rs = stmt.executeQuery()) {
+        stocks = convertList(rs);
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    } finally {
+      DatabaseConnection.closeConnection(connection);
+    }
+    if(stocks.size() > 0) {
+      return stocks.get(0);
+    }
+    return null;
+
+  }
+
   Stock convert(ResultSet rs) throws SQLException {
     return new Stock.StockBuilder()
             .ndb(rs.getInt("NDB_Number"))

@@ -10,4 +10,6 @@ public interface StockDao {
    * @return user's stocks.
    */
   List<Stock> getStocks();
+
+  Stock getStockById(int id);
 }

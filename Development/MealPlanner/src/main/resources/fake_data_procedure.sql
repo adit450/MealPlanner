@@ -180,6 +180,33 @@ delimiter //
         (11, 1, 1, 1, CURTIME()),
         (12, 1, 3, 3, '2019-02-21 13:30:00'),
         (13, 2, 2, 12, '2019-04-21 18:30:00');
+        
+        INSERT INTO tag
+        (tag_id, tag_name)
+        VALUES
+        (1, "Dessert"),
+        (2, "Dinner"),
+        (3, "Drink"),
+        (4, "Italian"),
+        (5, "Southern"),
+        (6, "Baking"),
+        (7, "Stovetop");
+        
+        INSERT INTO recipe_has_tag
+        (recipe_id, tag_id)
+        VALUES
+        (1, 1),
+        (1, 3),
+        (2, 1),
+        (2, 6),
+        (3, 2),
+        (3, 4),
+        (3, 7),
+        (4, 1),
+        (4, 7),
+        (5, 2),
+        (5, 5),
+        (5, 7);
 
     END //
 

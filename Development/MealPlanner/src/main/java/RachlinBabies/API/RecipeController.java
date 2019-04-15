@@ -83,7 +83,7 @@ class RecipeController {
         return new ResponseMessage(String.format("Recipe %d deleted", recipeId));
       }
       res.status(400);
-      return new ResponseMessage(String.format("Could not dlete recipe %d", recipeId));
+      return new ResponseMessage(String.format("Could not delete recipe %d", recipeId));
     }, json());
 
     exception(Exception.class, (e, req, res) -> {

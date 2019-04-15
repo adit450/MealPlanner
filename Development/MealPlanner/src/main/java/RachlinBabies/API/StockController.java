@@ -9,7 +9,7 @@ import RachlinBabies.Utils.ResponseMessage;
 import static RachlinBabies.Utils.JsonUtil.json;
 import static spark.Spark.get;
 
-public class StockController {
+class StockController {
   StockController(final StockDao stockService) {
     get("/stocks", (req, res) -> {
       List<Stock> stocks = stockService.getStocks();

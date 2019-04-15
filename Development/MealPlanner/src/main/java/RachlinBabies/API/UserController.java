@@ -1,22 +1,23 @@
 package RachlinBabies.API;
 
-import RachlinBabies.Model.User;
-import RachlinBabies.Service.UserDao;
-import RachlinBabies.Service.UserService;
-import RachlinBabies.Utils.ResponseMessage;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static RachlinBabies.Utils.JsonUtil.*;
-import static spark.Spark.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import RachlinBabies.Model.User;
+import RachlinBabies.Service.UserDao;
+import RachlinBabies.Utils.ResponseMessage;
+
+import static RachlinBabies.Utils.JsonUtil.dateGson;
+import static RachlinBabies.Utils.JsonUtil.json;
+import static spark.Spark.before;
+import static spark.Spark.options;
+import static spark.Spark.post;
 
 class UserController {
 

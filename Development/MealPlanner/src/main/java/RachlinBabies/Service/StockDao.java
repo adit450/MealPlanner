@@ -11,5 +11,10 @@ public interface StockDao {
    */
   List<Stock> getStocks();
 
+  /**
+   * Get stock from stock_id
+   * @param id stock_id
+   * @return stock with given id
+   */
   Stock getStockById(int id);
 }

@@ -39,7 +39,7 @@ public class StockService extends Service<Stock> implements StockDao {
 
   @Override
   public Stock getStockById(int id) {
-    List<Stock> stocks = null;
+    Stock stock = null;
     String query = "SELECT stock.*, sum(quantity) as 'quantity',\n" +
             "long_name, expr_rate, manufacturer, serving_size,\n" +
             "serving_size_uom, household_serving_size, household_serving_size_uom\n" +
@@ -54,18 +54,14 @@ public class StockService extends Service<Stock> implements StockDao {
       stmt.setInt(1, userId);
       stmt.setInt(2, id);
       try (ResultSet rs = stmt.executeQuery()) {
-        stocks = convertList(rs);
+        if (rs.first()) { stock = convert(rs); }
       }
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, e.getMessage(), e);
     } finally {
       DatabaseConnection.closeConnection(connection);
     }
-    if(stocks.size() > 0) {
-      return stocks.get(0);
-    }
-    return null;
-
+    return stock;
   }
 
   Stock convert(ResultSet rs) throws SQLException {

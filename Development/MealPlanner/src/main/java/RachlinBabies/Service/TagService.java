@@ -72,6 +72,7 @@ public class TagService extends Service<Tag> implements TagDao {
     String query = "INSERT INTO tag (tag_name) VALUES (?)";
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
+      stmt.setString(1, tag.getName());
       inserts = stmt.executeUpdate();
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, e.getMessage(), e);

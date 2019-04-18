@@ -1,10 +1,12 @@
 package RachlinBabies.Service;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -231,6 +233,25 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
       DatabaseConnection.closeConnection(connection);
     }
     return updated;
+  }
+
+  public boolean rate(int recipeId, int rating) {
+    boolean success = false;
+    String query = "CALL new_rating(?,?,?,?)";
+    Connection connection = DatabaseConnection.getConnection();
+    try (CallableStatement stmt = connection.prepareCall(query)) {
+      stmt.setInt(1, recipeId);
+      stmt.setInt(2, userId);
+      stmt.setInt(3, rating);
+      stmt.registerOutParameter(4, Types.TINYINT);
+      stmt.executeUpdate();
+      success = stmt.getBoolean(4);
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    } finally {
+      DatabaseConnection.closeConnection(connection);
+    }
+    return success;
   }
 
   /**

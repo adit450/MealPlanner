@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -294,5 +295,38 @@ public class TestAPI {
   public void testFilterByTag() {
     TestResponse res = request("GET", "/recipes/filter?tags=2,7");
     assertEquals(2, res.jsonArray().size());
+  }
+
+  @Test
+  public void testRating() {
+    Map<String, Integer> json = new HashMap<>();
+    json.put("recipeId", 1);
+    json.put("rating", 2);
+    String payload = toJson(json);
+    TestResponse res = request("POST", "/recipes/rating", payload);
+    assert res != null;
+    assertEquals(200, res.status);
+  }
+
+  @Test
+  public void testRatingFailBadRating() {
+    Map<String, Integer> json = new HashMap<>();
+    json.put("recipeId", 1);
+    json.put("rating", 200);
+    String payload = toJson(json);
+    TestResponse res = request("POST", "/recipes/rating", payload);
+    assert res != null;
+    assertEquals(400, res.status);
+  }
+
+  @Test
+  public void testRatingFailBadRecipe() {
+    Map<String, Integer> json = new HashMap<>();
+    json.put("recipeId", -1);
+    json.put("rating", 2);
+    String payload = toJson(json);
+    TestResponse res = request("POST", "/recipes/rating", payload);
+    assert res != null;
+    assertEquals(400, res.status);
   }
 }

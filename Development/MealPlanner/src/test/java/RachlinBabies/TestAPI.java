@@ -277,6 +277,7 @@ public class TestAPI {
     Tag tag = new Tag(null, "Asian");
     String payload = toJson(tag);
     TestResponse res = request("POST", "/tags", payload);
+    assert res != null;
     assertEquals(200, res.status);
   }
 
@@ -285,6 +286,13 @@ public class TestAPI {
     Tag tag = new Tag(null, "dessert");
     String payload = toJson(tag);
     TestResponse res = request("POST", "/tags", payload);
+    assert res != null;
     assertEquals(400, res.status);
+  }
+
+  @Test
+  public void testFilterByTag() {
+    TestResponse res = request("GET", "/recipes/filter?tags=2,7");
+    assertEquals(2, res.jsonArray().size());
   }
 }

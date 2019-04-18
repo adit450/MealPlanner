@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,6 +66,32 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
       DatabaseConnection.closeConnection(connection);
     }
     return recipe;
+  }
+
+  public List<Recipe> filterByTag(int[] tags) {
+    List<Recipe> recipes = new ArrayList<>();
+    if (tags.length == 0) { return recipes; }
+    String filter = "JOIN (SELECT recipe_id FROM recipe_has_tag WHERE tag_id = ?) filter%d USING (recipe_id)";
+    StringBuilder filters = new StringBuilder();
+    for (int i = 0; i < tags.length; i++) {
+      filters.append(String.format(filter, i + 1));
+    }
+    String query = String.format("SELECT * FROM recipe %s", filters);
+    Connection connection = DatabaseConnection.getConnection();
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+      for (int i = 1; i <= tags.length; i++) {
+        stmt.setInt(i, tags[i - 1]);
+      }
+      try (ResultSet rs = stmt.executeQuery()) {
+        recipes = convertList(rs);
+      }
+      appendTagsToList(recipes, connection);
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    } finally {
+      DatabaseConnection.closeConnection(connection);
+    }
+    return recipes;
   }
 
   public List<Recipe> myRecipes() {

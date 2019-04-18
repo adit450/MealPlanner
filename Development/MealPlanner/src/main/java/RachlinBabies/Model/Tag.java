@@ -1,5 +1,8 @@
 package RachlinBabies.Model;
 
+
+import java.util.List;
+
 /**
  * Class representing the tags of a recipe.
  */

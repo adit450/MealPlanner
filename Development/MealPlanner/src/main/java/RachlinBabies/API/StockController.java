@@ -19,5 +19,15 @@ class StockController {
       res.status(404);
       return new ResponseMessage("Could not get stocks");
     }, json());
+
+    get("/stocks/one/:id", (req, res) -> {
+      int id = Integer.parseInt(req.params(":id"));
+      Stock stock = stockService.getStockById(id);
+      if (stock != null) {
+        return stock;
+      }
+      res.status(404);
+      return new ResponseMessage("Could not get stocks");
+    }, json());
   }
 }

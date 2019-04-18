@@ -11,7 +11,7 @@ import spark.ResponseTransformer;
 public class JsonUtil {
 
   public static Gson dateGson() {
-    return new GsonBuilder().setDateFormat("EEE, d MMM yyyy HH:mm:ss").create();
+    return new GsonBuilder().setDateFormat("d MMM yyyy HH:mm:ss").create();
   }
 
   public static String toJson(Object object) {

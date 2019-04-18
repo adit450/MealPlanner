@@ -11,5 +11,6 @@ public class App
       ControllerFactory.getStockController();
       ControllerFactory.getStockItemController();
       ControllerFactory.getUserController();
+      ControllerFactory.getTagController();
     }
 }

@@ -297,8 +297,8 @@ CREATE INDEX `fk_serving_size_product1_idx` ON `mealplanner`.`serving_size` (`pr
 -- Table `mealplanner`.`tag`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mealplanner`.`tag` (
-  `tag_id` INT NOT NULL,
-  `tag_name` VARCHAR(50) NOT NULL,
+  `tag_id` INT NOT NULL AUTO_INCREMENT,
+  `tag_name` VARCHAR(50) NOT NULL UNIQUE,
   PRIMARY KEY (`tag_id`)
   )
 ENGINE = InnoDB;

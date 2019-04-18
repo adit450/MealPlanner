@@ -5,6 +5,7 @@ import RachlinBabies.Service.ProductService;
 import RachlinBabies.Service.RecipeService;
 import RachlinBabies.Service.StockItemService;
 import RachlinBabies.Service.StockService;
+import RachlinBabies.Service.TagService;
 import RachlinBabies.Service.UserService;
 
 
@@ -15,6 +16,7 @@ public abstract class ControllerFactory {
   private static StockController stock;
   private static StockItemController stockItem;
   private static UserController user;
+  private static TagController tag;
 
   private ControllerFactory() {}
 
@@ -58,5 +60,12 @@ public abstract class ControllerFactory {
       user = new UserController(new UserService());
     }
     return user;
+  }
+
+  public static TagController getTagController() {
+    if (tag == null) {
+      tag = new TagController(new TagService());
+    }
+    return tag;
   }
 }

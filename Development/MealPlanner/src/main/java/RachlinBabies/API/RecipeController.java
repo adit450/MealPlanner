@@ -1,6 +1,7 @@
 package RachlinBabies.API;
 
 import RachlinBabies.Model.Recipe;
+import RachlinBabies.Model.Tag;
 import RachlinBabies.Service.RecipeDao;
 import RachlinBabies.Utils.ResponseMessage;
 
@@ -29,6 +30,15 @@ class RecipeController {
       }
       res.status(404);
       return new ResponseMessage(String.format("No recipe with id %d found", recipeId));
+    }, json());
+
+    get("/recipes/filter", (req, res) -> {
+      String[] tags = req.queryParams("tags").split(",");
+      int[] payload = new int[tags.length];
+      for (int i = 0; i < tags.length; i++) {
+        payload[i] = Integer.parseInt(tags[i]);
+      }
+      return recipeService.filterByTag(payload);
     }, json());
 
     get("/recipes/search/:name", (req, res) -> {

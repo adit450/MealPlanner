@@ -14,7 +14,11 @@ public class Recipe {
   private Integer yield;
   private Timestamp dateCreated;
   private Set<RecipeProduct> ingredients;
+  private Set<Tag> tags;
 
+  /**
+   * Class representing the ingredients of hte recipe
+   */
   public static class RecipeProduct {
     Product product;
     int servings;
@@ -76,6 +80,10 @@ public class Recipe {
   public void setIngredients(Set<RecipeProduct> ingredients) {
     this.ingredients = ingredients;
   }
+
+  public Set<Tag> getTags() { return tags; }
+
+  public void setTags(Set<Tag> tags) { this.tags = tags; }
 
   /**
    * Builder class for Recipe.

@@ -11,6 +11,7 @@ delimiter //
         DELETE FROM intake_recipe;
         DELETE FROM product_stock;
         DELETE FROM recipe_has_product;
+        DELETE FROM tag;
         DELETE FROM rating;
         DELETE FROM recipe;
         DELETE FROM follow;

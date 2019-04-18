@@ -3,6 +3,7 @@ package RachlinBabies.Service;
 import java.util.List;
 
 import RachlinBabies.Model.Recipe;
+import RachlinBabies.Model.Tag;
 
 /**
  * Queries offered on Recipe
@@ -56,4 +57,10 @@ public interface RecipeDao {
    */
     List<Recipe> searchRecipes(String name);
 
+  /**
+   * Filter recipes by tag
+   * @param tags the ids of the tags to filter by
+   * @return the recipes that have the given tags.
+   */
+  List<Recipe> filterByTag(int[] tags);
 }

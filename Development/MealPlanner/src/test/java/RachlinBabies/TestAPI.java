@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import RachlinBabies.Model.Intake;
+import RachlinBabies.Model.Tag;
 import RachlinBabies.Service.IntakeService;
 import RachlinBabies.Service.Service;
 import spark.Spark;
@@ -244,5 +245,54 @@ public class TestAPI {
     TestResponse res = request("GET", "/products/search/commiegobblediegook");
     Map json = res.json();
     assertEquals(0, json.size());
+  }
+
+  @Test
+  public void testGetTag() {
+    TestResponse res = request("GET", "/tags/1");
+    assertEquals(1.0, res.json().get("id"));
+    assertEquals("Dessert", res.json().get("name"));
+  }
+
+  @Test
+  public void testGetTag404() {
+    TestResponse res = request("GET", "/tags/-1");
+    assertEquals(404, res.status);
+  }
+
+  @Test
+  public void testGetTags() {
+    TestResponse res = request("GET", "/tags");
+    assertEquals(7, res.jsonArray().size());
+  }
+
+  @Test
+  public void testSearchTags() {
+    TestResponse res = request("GET", "/tags/search/D");
+    assertEquals(3, res.jsonArray().size());
+  }
+
+  @Test
+  public void createTag() {
+    Tag tag = new Tag(null, "Asian");
+    String payload = toJson(tag);
+    TestResponse res = request("POST", "/tags", payload);
+    assert res != null;
+    assertEquals(200, res.status);
+  }
+
+  @Test
+  public void createTagFail() {
+    Tag tag = new Tag(null, "dessert");
+    String payload = toJson(tag);
+    TestResponse res = request("POST", "/tags", payload);
+    assert res != null;
+    assertEquals(400, res.status);
+  }
+
+  @Test
+  public void testFilterByTag() {
+    TestResponse res = request("GET", "/recipes/filter?tags=2,7");
+    assertEquals(2, res.jsonArray().size());
   }
 }

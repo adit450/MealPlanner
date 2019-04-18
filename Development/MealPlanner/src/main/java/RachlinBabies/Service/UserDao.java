@@ -27,5 +27,4 @@ public interface UserDao {
     boolean create(User toInsert);
 
     boolean login(String username, String password);
-
 }

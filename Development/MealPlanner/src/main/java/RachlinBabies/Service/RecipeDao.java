@@ -55,5 +55,4 @@ public interface RecipeDao {
    * @return recipes matching search parameter.
    */
     List<Recipe> searchRecipes(String name);
-
 }

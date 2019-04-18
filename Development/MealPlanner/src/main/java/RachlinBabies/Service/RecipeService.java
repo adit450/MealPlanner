@@ -12,11 +12,11 @@ import java.util.logging.Level;
 
 import RachlinBabies.Model.Product;
 import RachlinBabies.Model.Recipe;
+import RachlinBabies.Model.Tag;
 import RachlinBabies.Utils.DatabaseConnection;
 
 import static RachlinBabies.Utils.DatabaseConnection.rollback;
 import static RachlinBabies.Utils.DatabaseConnection.setAutoCommit;
-import static RachlinBabies.Utils.JsonUtil.toJson;
 
 /**
  * Service class that holds all the queries to the database that relate to Intakes.
@@ -57,6 +57,7 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
             recipe.setIngredients(ingredients);
           }
         }
+        appendTags(recipe, connection);
       }
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -77,6 +78,7 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
       try (ResultSet rs = stmt.executeQuery()) {
         recipes = convertList(rs);
       }
+      appendTagsToList(recipes, connection);
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, e.getMessage(), e);
     } finally {
@@ -84,7 +86,6 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
     }
     return recipes;
   }
-
 
   public List<Recipe> searchRecipes(String name) {
     List<Recipe> recipes = null;
@@ -96,6 +97,7 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
       try (ResultSet rs = stmt.executeQuery()) {
         recipes = convertList(rs);
       }
+      appendTagsToList(recipes, connection);
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, e.getMessage(), e);
     } finally {
@@ -115,6 +117,7 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
       try (ResultSet rs = stmt.executeQuery()) {
         recipes = convertList(rs);
       }
+      appendTagsToList(recipes, connection);
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, e.getMessage(), e);
     } finally {
@@ -146,7 +149,8 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
         }
       }
       if (recipeId != 0) {
-        success = replaceIngredients(recipeId, toInsert.getIngredients(), connection);
+        success = replaceIngredients(recipeId, toInsert.getIngredients(), connection)
+                && replaceTags(recipeId, toInsert.getTags(), connection);
       }
       if (success) {
         connection.commit();
@@ -166,7 +170,7 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
   public boolean updateRecipe(Recipe toUpdate) {
     boolean updated = false;
     int recipeId = toUpdate.getRecipeId();
-    String query = "UPDATE recipe SET name = ?, description = ?, yield = ?, instructions =? " +
+    String query = "UPDATE recipe SET name = ?, description = ?, yield = ?, instructions = ? " +
             "WHERE creator_id = ? AND recipe_id = ?";
     Connection connection = DatabaseConnection.getConnection();
     try {
@@ -177,7 +181,8 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
         stmt.setInt(3, toUpdate.getYield());
         stmt.setString(4, toUpdate.getInstructions());
         if (stmt.executeUpdate() > 0) {
-          updated = replaceIngredients(recipeId, toUpdate.getIngredients(), connection);
+          updated = replaceIngredients(recipeId, toUpdate.getIngredients(), connection)
+                  && replaceTags(recipeId, toUpdate.getTags(), connection);
         }
       }
       if (updated) {
@@ -228,6 +233,37 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
     return success;
   }
 
+  /**
+   * Helper method that clears tags related to a recipe and then inserts new values.
+   * @param recipeId the id of the related recipe
+   * @param tags the tags to insert
+   * @param connection the JDBC connection
+   * @return if the insert was successful.
+   */
+  private boolean replaceTags(int recipeId, Set<Tag> tags, Connection connection) {
+    boolean success = false;
+    int tagInserts = 0;
+    String insertTags = "INSERT INTO recipe_has_tag VALUES (?,?)";
+    String clearTags = "DELETE FROM recipe_has_tag WHERE recipe_id = ?";
+    try {
+      try (PreparedStatement stmt = connection.prepareStatement(clearTags)) {
+        stmt.setInt(1, recipeId);
+        stmt.executeUpdate();
+      }
+      try (PreparedStatement stmt = connection.prepareStatement(insertTags)) {
+        for (Tag tag : tags) {
+          stmt.setInt(1, recipeId);
+          stmt.setInt(2, tag.getId());
+          tagInserts += stmt.executeUpdate();
+        }
+        success = tagInserts == tags.size();
+      }
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, e.getMessage(), e);
+    }
+    return success;
+  }
+
   public boolean deleteRecipe(int recipeId) {
     int result = 0;
     String query = "UPDATE recipe SET deleted = TRUE WHERE recipe_id = ? AND creator_id = ?";
@@ -242,6 +278,32 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
       DatabaseConnection.getConnection();
     }
     return result > 0;
+  }
+
+  private void appendTagsToList(List<Recipe> recipes, Connection connection) throws SQLException {
+    for (Recipe recipe : recipes) {
+      appendTags(recipe, connection);
+    }
+  }
+
+  /**
+   * Append a recipe's tags to an existing Recipe
+   * @param recipe the Recipe to add tags to.
+   * @param connection the connection to reuse.
+   */
+  private void appendTags(Recipe recipe, Connection connection) throws SQLException {
+    String query = "SELECT tag.* FROM tag JOIN recipe_has_tag USING (tag_id) WHERE recipe_id = ?";
+    Service<Tag> tagService = new TagService();
+    Set<Tag> tags = new HashSet<>();
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+      stmt.setInt(1, recipe.getRecipeId());
+      try (ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+          tags.add(tagService.convert(rs));
+        }
+      }
+    }
+    recipe.setTags(tags);
   }
 
   /**

@@ -25,13 +25,17 @@ import static RachlinBabies.Utils.DatabaseConnection.setAutoCommit;
 public class RecipeService extends Service<Recipe> implements RecipeDao {
 
   private static final String SELECT_RECIPES = "SELECT recipe_id, creator_id, " +
-          "instructions, name, description, yield, created_at " +
+          "instructions, name, description, yield, created_at, " +
+          "avgRating(recipe_id) as 'overallRating', numRating(recipe_id) as 'ratings' " +
           "FROM recipe WHERE !deleted";
+
+  private static final String ORDER_BY = " ORDER BY overallRating DESC, ratings DESC";
 
   public Recipe getRecipe(int recipeId) {
     Recipe recipe = null;
     Set<Recipe.RecipeProduct> ingredients = new HashSet<>();
-    String query = "SELECT * FROM recipe WHERE recipe_id = ? AND !deleted";
+    String query = "SELECT *, avgRating(recipe_id) as 'overallRating', " +
+            "numRating(recipe_id) as 'ratings' FROM recipe WHERE recipe_id = ? AND !deleted";
     String getIngredients = "SELECT rp.*, long_name, expr_rate, manufacturer, serving_size, " +
             "serving_size_uom, household_serving_size, household_serving_size_uom " +
             "FROM recipe_has_product rp JOIN product p USING (NDB_Number) " +
@@ -76,7 +80,9 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
     for (int i = 0; i < tags.length; i++) {
       filters.append(String.format(filter, i + 1));
     }
-    String query = String.format("SELECT * FROM recipe %s", filters);
+    String query = String.format("SELECT *, avgRating(recipe_id) as 'overallRating', " +
+            "numRating(recipe_id) as 'ratings' " +
+            "FROM recipe %s", filters) + ORDER_BY;
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
       for (int i = 1; i <= tags.length; i++) {
@@ -97,7 +103,7 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
   public List<Recipe> myRecipes() {
     List<Recipe> recipes = null;
 
-    String query = SELECT_RECIPES + " AND creator_id = ?";
+    String query = SELECT_RECIPES + " AND creator_id = ?" + ORDER_BY;
 
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -116,7 +122,7 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
 
   public List<Recipe> searchRecipes(String name) {
     List<Recipe> recipes = null;
-    String query = SELECT_RECIPES + " AND name LIKE ?";
+    String query = SELECT_RECIPES + " AND name LIKE ?" + ORDER_BY;
     String param = String.format("%%%s%%", name);
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -136,7 +142,7 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
   public List<Recipe> getByStock() {
     List<Recipe> recipes = null;
 
-    String query = SELECT_RECIPES + " AND recipeCanBeMade(?,recipe_id)";
+    String query = SELECT_RECIPES + " AND recipeCanBeMade(?,recipe_id)" + ORDER_BY;
 
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -349,6 +355,8 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
             .descriptions(rs.getString("description"))
             .yield(rs.getInt("yield"))
             .dateCreated(rs.getTimestamp("created_at"))
+            .overallRating(rs.getDouble("overallRating"))
+            .ratings(rs.getInt("ratings"))
             .build();
   }
 }

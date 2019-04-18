@@ -228,6 +228,38 @@ delimiter //
     -- END STOCK PROCEDURES AND TRIGGERS --
     -- BEGIN RECIPE PROCEDURES AND TRIGGERS --
     
+    DROP FUNCTION IF EXISTS numRating //
+    CREATE FUNCTION numRating
+    (
+		recipe INT
+    )
+    RETURNS INT
+    BEGIN
+		DECLARE ans INT;
+        
+        SELECT count(*) INTO ans
+        FROM rating
+        WHERE recipe_id = recipe;
+        
+        RETURN ans;
+    END //
+    
+    DROP FUNCTION IF EXISTS avgRating //
+    CREATE FUNCTION avgRating
+    (
+		recipe INT
+    )
+    RETURNS DOUBLE
+    BEGIN
+		DECLARE ans DOUBLE;
+        
+        SELECT sum(score) / count(*) INTO ans
+        FROM rating
+        WHERE recipe_id = recipe;
+        
+        RETURN ans;
+    END //
+    
     DROP TRIGGER IF EXISTS before_insert_recipe //
     CREATE TRIGGER before_insert_recipe BEFORE INSERT ON recipe
     FOR EACH ROW

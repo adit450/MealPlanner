@@ -9,7 +9,7 @@ import static RachlinBabies.Utils.JsonUtil.json;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-public class TagController {
+class TagController {
 
   TagController(final TagDao tagService) {
     get("/tags/:id", (req, res) -> {

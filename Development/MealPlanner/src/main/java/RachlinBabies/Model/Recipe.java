@@ -15,6 +15,8 @@ public class Recipe {
   private Timestamp dateCreated;
   private Set<RecipeProduct> ingredients;
   private Set<Tag> tags;
+  private double overallRating;
+  private int ratings;
 
   /**
    * Class representing the ingredients of hte recipe
@@ -43,7 +45,7 @@ public class Recipe {
 
 
   private Recipe(int recipeId, int userId, String instructions, String name, String descriptions,
-                 int yield, Timestamp date) {
+                 int yield, Timestamp date, double overallRating, int ratings) {
     this.recipeId = recipeId;
     this.userId = userId;
     this.instructions = instructions;
@@ -51,6 +53,8 @@ public class Recipe {
     this.descriptions = descriptions;
     this.yield = yield;
     this.dateCreated = date;
+    this.overallRating = overallRating;
+    this.ratings = ratings;
   }
 
   public int getRecipeId() {
@@ -97,6 +101,8 @@ public class Recipe {
     private String descriptions;
     private int yield;
     private Timestamp dateCreated;
+    private double overallRating;
+    private int ratings;
 
 
     public RecipeBuilder recipeId(int recipeId) {
@@ -134,9 +140,19 @@ public class Recipe {
       return this;
     }
 
+    public RecipeBuilder overallRating(double overallRating) {
+      this.overallRating = overallRating;
+      return this;
+    }
+
+    public RecipeBuilder ratings(int ratings) {
+      this.ratings = ratings;
+      return this;
+    }
+
     public Recipe build() {
       return new Recipe(this.recipeId, this.userId, this.instructions, this.name,
-              this.descriptions, this.yield, this.dateCreated);
+              this.descriptions, this.yield, this.dateCreated, this.overallRating, this.ratings);
     }
   }
 }

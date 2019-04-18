@@ -6,6 +6,7 @@ import RachlinBabies.Service.RecipeDao;
 import RachlinBabies.Utils.ResponseMessage;
 
 import java.util.List;
+import java.util.Map;
 
 import static RachlinBabies.Utils.JsonUtil.dateGson;
 import static RachlinBabies.Utils.JsonUtil.json;
@@ -76,6 +77,21 @@ class RecipeController {
       }
       res.status(400);
       return new ResponseMessage("Could not create recipe");
+    }, json());
+
+    post("/recipes/rating", (req, res) -> {
+      Map payload = dateGson().fromJson(req.body(), Map.class);
+      int recipeId = ((Double)payload.get("recipeId")).intValue();
+      int rating = ((Double)payload.get("rating")).intValue();
+      if (rating < 0 || rating > 5) {
+        res.status(400);
+        return new ResponseMessage("Rating out of range (0-5)");
+      }
+      if (!recipeService.rate(recipeId, rating)) {
+        res.status(400);
+        return new ResponseMessage("Failed to add rating");
+      }
+      return new ResponseMessage("Rating added");
     }, json());
 
     put("/recipes", (req, res) -> {

@@ -228,6 +228,38 @@ delimiter //
     -- END STOCK PROCEDURES AND TRIGGERS --
     -- BEGIN RECIPE PROCEDURES AND TRIGGERS --
     
+    DROP FUNCTION IF EXISTS numRating //
+    CREATE FUNCTION numRating
+    (
+		recipe INT
+    )
+    RETURNS INT
+    BEGIN
+		DECLARE ans INT;
+        
+        SELECT count(*) INTO ans
+        FROM rating
+        WHERE recipe_id = recipe;
+        
+        RETURN ans;
+    END //
+    
+    DROP FUNCTION IF EXISTS avgRating //
+    CREATE FUNCTION avgRating
+    (
+		recipe INT
+    )
+    RETURNS DOUBLE
+    BEGIN
+		DECLARE ans DOUBLE;
+        
+        SELECT sum(score) / count(*) INTO ans
+        FROM rating
+        WHERE recipe_id = recipe;
+        
+        RETURN ans;
+    END //
+    
     DROP TRIGGER IF EXISTS before_insert_recipe //
     CREATE TRIGGER before_insert_recipe BEFORE INSERT ON recipe
     FOR EACH ROW
@@ -236,6 +268,34 @@ delimiter //
     END //
     
     -- END RECIPE PROCEDURES AND TRIGGERS --
+    
+    -- BEGIN RATING TRIGGERS --
+	DROP PROCEDURE IF EXISTS new_rating //
+    CREATE PROCEDURE new_rating
+    (
+		recipe INT,
+        user INT,
+        newScore INT,
+        OUT inserted TINYINT
+    )
+    BEGIN
+		DECLARE ratingExists TINYINT;
+        DECLARE sql_error TINYINT DEFAULT FALSE;
+        DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET sql_error = TRUE;
+        SELECT count(*) > 0 INTO ratingExists
+        FROM rating
+        WHERE user_id = user AND recipe_id = recipe;
+        
+        SET newScore = newScore + 1;
+        
+        IF ratingExists THEN
+			UPDATE rating SET score = newScore WHERE user_id = user AND recipe_id = recipe;
+		ELSE
+			INSERT INTO rating VALUES (recipe, user, newScore);
+        END IF;
+        SET inserted = !sql_error;
+    END //
+    -- END RATING TRIGGERS
     
     DROP TRIGGER IF EXISTS cascade_delete //
     CREATE TRIGGER cascade_delete BEFORE UPDATE ON user

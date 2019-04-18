@@ -13,7 +13,7 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.put;
 
-public class StockItemController {
+class StockItemController {
   StockItemController(final StockItemDao stockItemService) {
     get("/stock/all/:id", (req, res) -> {
       int stockId = Integer.parseInt(req.params(":id"));

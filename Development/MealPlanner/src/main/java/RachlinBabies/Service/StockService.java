@@ -18,7 +18,7 @@ public class StockService extends Service<Stock> implements StockDao {
             "long_name, expr_rate, manufacturer, serving_size,\n" +
             "serving_size_uom, household_serving_size, household_serving_size_uom\n" +
             "FROM product_stock stock\n" +
-            "JOIN stock_item USING (stock_id)\n" +
+            "INNER JOIN stock_item USING (stock_id)\n" +
             "JOIN product p USING (NDB_Number)\n" +
             "JOIN serving_size ss ON (p.NDB_Number = ss.product_NDB_Number)\n" +
             "WHERE user_id = ?\n" +
@@ -44,7 +44,7 @@ public class StockService extends Service<Stock> implements StockDao {
             "long_name, expr_rate, manufacturer, serving_size,\n" +
             "serving_size_uom, household_serving_size, household_serving_size_uom\n" +
             "FROM product_stock stock\n" +
-            "JOIN stock_item USING (stock_id)\n" +
+            "LEFT JOIN stock_item USING (stock_id)\n" +
             "JOIN product p USING (NDB_Number)\n" +
             "JOIN serving_size ss ON (p.NDB_Number = ss.product_NDB_Number)\n" +
             "WHERE user_id = ? AND stock_id = ?\n" +

@@ -102,14 +102,14 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
     return recipes;
   }
 
-  public List<Recipe> myRecipes() {
+
+  public List<Recipe> searchRecipes(String name) {
     List<Recipe> recipes = null;
-
-    String query = SELECT_RECIPES + " AND creator_id = ?" + ORDER_BY;
-
+    String query = SELECT_RECIPES + " AND name LIKE ?" + ORDER_BY;
+    String param = String.format("%%%s%%", name);
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
-      stmt.setInt(1, userId);
+      stmt.setString(1, param);
       try (ResultSet rs = stmt.executeQuery()) {
         recipes = convertList(rs);
       }
@@ -122,13 +122,14 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
     return recipes;
   }
 
-  public List<Recipe> searchRecipes(String name) {
+  public List<Recipe> myRecipes() {
     List<Recipe> recipes = null;
-    String query = SELECT_RECIPES + " AND name LIKE ?" + ORDER_BY;
-    String param = String.format("%%%s%%", name);
+
+    String query = SELECT_RECIPES + " AND creator_id = ?" + ORDER_BY;
+
     Connection connection = DatabaseConnection.getConnection();
     try (PreparedStatement stmt = connection.prepareStatement(query)) {
-      stmt.setString(1, param);
+      stmt.setInt(1, userId);
       try (ResultSet rs = stmt.executeQuery()) {
         recipes = convertList(rs);
       }
@@ -262,7 +263,7 @@ public class RecipeService extends Service<Recipe> implements RecipeDao {
    * @return if the insert was successful.
    */
   private boolean replaceIngredients(int recipeId, Set<Recipe.RecipeProduct> ingredients,
-                                    Connection connection) {
+                                     Connection connection) {
     boolean success = false;
     int ingredientInserts = 0;
     String insertIngredients = "INSERT INTO recipe_has_product VALUES (?,?,?)";

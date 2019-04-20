@@ -52,6 +52,15 @@ class RecipeController {
       return new ResponseMessage(BAD_GET);
     }, json());
 
+    get("/recipes/myRecipes", (req, res) -> {
+      List<Recipe> recipes = recipeService.myRecipes();
+      if (recipes != null) {
+        return recipes;
+      }
+      res.status(404);
+      return new ResponseMessage(BAD_GET);
+    }, json());
+
     get("/recipes/available", (req, res) -> {
       List<Recipe> recipes = recipeService.getByStock();
       if (recipes != null) {
@@ -61,14 +70,7 @@ class RecipeController {
       return new ResponseMessage(BAD_GET);
     }, json());
 
-    get("/recipes/myRecipes", (req, res) -> {
-      List<Recipe> recipes = recipeService.myRecipes();
-      if (recipes != null) {
-        return recipes;
-      }
-      res.status(404);
-      return new ResponseMessage(BAD_GET);
-    }, json());
+
 
     post("/recipes", (req, res) -> {
       Recipe payload = dateGson().fromJson(req.body(), Recipe.class);
@@ -118,6 +120,7 @@ class RecipeController {
     });
   }
 }
+
 
 
 
